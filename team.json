@@ -1,0 +1,27 @@
+{
+  "team_number": "T0096",
+  "group_lead": {
+    "name": "Sahej Preet Singh Chawla",
+    "enrollment_no": "2501010392",
+    "github": "Sahej-codeit13"
+  },
+  "members": [
+    {
+      "name": "Saumya Verma",
+      "enrollment_no": "2501010413",
+      "github": "saumyavermaa"
+    },
+    {
+      "name": "Ansh Singh",
+      "enrollment_no": "2501010070",
+      "github": "AnshSinghRajput7"
+    },
+    {
+      "name": "Yashwinder Singh",
+      "enrollment_no": "2501010528",
+      "github": "Yashwindersingh269"
+    }
+  ],
+  "postgres_version": "",
+  "laptop_used_for_benchmarks": "MacBook Pro"
+}
