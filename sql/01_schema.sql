@@ -166,6 +166,7 @@ CREATE TABLE applications (
     easy_apply BOOLEAN NOT NULL,
     status VARCHAR(30) NOT NULL,
     status_updated_at TIMESTAMPTZ,
+CONSTRAINT applications_job_member_unique UNIQUE (job_id, member_id),
 
     FOREIGN KEY (job_id)
         REFERENCES jobs(job_id),
