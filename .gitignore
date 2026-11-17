@@ -1,3 +1,9 @@
 seed_data/
 large_data/
 .DS_Store
+
+# Local PostgreSQL backups
+*.dump
+
+# Old mixed schema backup (not for submission)
+sql/01_schema_mixed_backup.sql

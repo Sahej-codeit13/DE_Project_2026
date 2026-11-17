@@ -1,0 +1,104 @@
+# LinkedIn Professional Network — ER Diagram
+
+```mermaid
+erDiagram
+    CITIES ||--o{ MEMBERS : lives_in
+    CITIES ||--o{ COMPANIES : headquarters
+    CITIES ||--o{ JOBS : located_in
+
+    MEMBERS ||--o{ POSITIONS : holds
+    COMPANIES ||--o{ POSITIONS : offers
+
+    MEMBERS ||--o{ MEMBER_SKILLS : has
+    SKILLS ||--o{ MEMBER_SKILLS : includes
+
+    COMPANIES ||--o{ JOBS : posts
+
+    JOBS ||--o{ JOB_SKILLS : requires
+    SKILLS ||--o{ JOB_SKILLS : included_in
+
+    MEMBERS ||--o{ APPLICATIONS : submits
+    JOBS ||--o{ APPLICATIONS : receives
+
+    MEMBERS ||--o{ CONNECTIONS : connects
+
+    MEMBERS ||--o{ INVITATIONS : sends
+    MEMBERS ||--o{ INVITATIONS : receives
+
+    MEMBERS ||--o{ PROFILE_VIEWS : viewer
+    MEMBERS ||--o{ PROFILE_VIEWS : viewed
+
+    CITIES {
+        int city_id PK
+        varchar city_name
+        varchar state
+    }
+
+    MEMBERS {
+        int member_id PK
+        varchar first_name
+        varchar last_name
+        varchar email UK
+        int city_id FK
+    }
+
+    COMPANIES {
+        int company_id PK
+        varchar company_name
+        int hq_city_id FK
+    }
+
+    POSITIONS {
+        int position_id PK
+        int member_id FK
+        int company_id FK
+        varchar title
+    }
+
+    SKILLS {
+        int skill_id PK
+        varchar skill_name
+    }
+
+    MEMBER_SKILLS {
+        int member_id PK, FK
+        int skill_id PK, FK
+        int endorsements
+    }
+
+    JOBS {
+        int job_id PK
+        int company_id FK
+        int city_id FK
+        varchar title
+    }
+
+    JOB_SKILLS {
+        int job_id PK, FK
+        int skill_id PK, FK
+    }
+
+    APPLICATIONS {
+        int application_id PK
+        int job_id FK
+        int member_id FK
+        varchar status
+    }
+
+    CONNECTIONS {
+        int member_a PK, FK
+        int member_b PK, FK
+    }
+
+    INVITATIONS {
+        int invitation_id PK
+        int sender_id FK
+        int recipient_id FK
+        varchar status
+    }
+
+    PROFILE_VIEWS {
+        int view_id PK
+        int viewer_id FK "nullable"
+        int viewed_id FK
+    }
