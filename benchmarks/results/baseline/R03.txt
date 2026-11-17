@@ -1,0 +1,63 @@
+=== R03 run 1 ===
+Sort  (cost=4130.27..4130.31 rows=15 width=12) (actual time=7.451..7.453 rows=14 loops=1)
+  Sort Key: connected_at DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=610
+  ->  Bitmap Heap Scan on connections c  (cost=4074.65..4129.98 rows=15 width=12) (actual time=7.423..7.426 rows=14 loops=1)
+        Recheck Cond: ((member_a = 1023) OR (member_b = 1023))
+        Heap Blocks: exact=1
+        Buffers: shared hit=607
+        ->  BitmapOr  (cost=4074.65..4074.65 rows=15 width=0) (actual time=7.387..7.388 rows=0 loops=1)
+              Buffers: shared hit=606
+              ->  Bitmap Index Scan on connections_pkey  (cost=0.00..4.48 rows=8 width=0) (actual time=0.019..0.019 rows=14 loops=1)
+                    Index Cond: (member_a = 1023)
+                    Buffers: shared hit=3
+              ->  Bitmap Index Scan on connections_pkey  (cost=0.00..4070.16 rows=7 width=0) (actual time=7.367..7.367 rows=0 loops=1)
+                    Index Cond: (member_b = 1023)
+                    Buffers: shared hit=603
+Planning:
+  Buffers: shared hit=83
+Planning Time: 0.383 ms
+Execution Time: 7.493 ms
+=== R03 run 2 ===
+Sort  (cost=4130.27..4130.31 rows=15 width=12) (actual time=5.819..5.821 rows=14 loops=1)
+  Sort Key: connected_at DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=610
+  ->  Bitmap Heap Scan on connections c  (cost=4074.65..4129.98 rows=15 width=12) (actual time=5.781..5.784 rows=14 loops=1)
+        Recheck Cond: ((member_a = 1023) OR (member_b = 1023))
+        Heap Blocks: exact=1
+        Buffers: shared hit=607
+        ->  BitmapOr  (cost=4074.65..4074.65 rows=15 width=0) (actual time=5.743..5.743 rows=0 loops=1)
+              Buffers: shared hit=606
+              ->  Bitmap Index Scan on connections_pkey  (cost=0.00..4.48 rows=8 width=0) (actual time=0.028..0.028 rows=14 loops=1)
+                    Index Cond: (member_a = 1023)
+                    Buffers: shared hit=3
+              ->  Bitmap Index Scan on connections_pkey  (cost=0.00..4070.16 rows=7 width=0) (actual time=5.713..5.714 rows=0 loops=1)
+                    Index Cond: (member_b = 1023)
+                    Buffers: shared hit=603
+Planning:
+  Buffers: shared hit=83
+Planning Time: 0.492 ms
+Execution Time: 5.875 ms
+=== R03 run 3 ===
+Sort  (cost=4130.27..4130.31 rows=15 width=12) (actual time=5.526..5.528 rows=14 loops=1)
+  Sort Key: connected_at DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=610
+  ->  Bitmap Heap Scan on connections c  (cost=4074.65..4129.98 rows=15 width=12) (actual time=5.496..5.499 rows=14 loops=1)
+        Recheck Cond: ((member_a = 1023) OR (member_b = 1023))
+        Heap Blocks: exact=1
+        Buffers: shared hit=607
+        ->  BitmapOr  (cost=4074.65..4074.65 rows=15 width=0) (actual time=5.483..5.483 rows=0 loops=1)
+              Buffers: shared hit=606
+              ->  Bitmap Index Scan on connections_pkey  (cost=0.00..4.48 rows=8 width=0) (actual time=0.018..0.018 rows=14 loops=1)
+                    Index Cond: (member_a = 1023)
+                    Buffers: shared hit=3
+              ->  Bitmap Index Scan on connections_pkey  (cost=0.00..4070.16 rows=7 width=0) (actual time=5.464..5.464 rows=0 loops=1)
+                    Index Cond: (member_b = 1023)
+                    Buffers: shared hit=603
+Planning:
+  Buffers: shared hit=83
+Planning Time: 0.465 ms
+Execution Time: 5.574 ms
