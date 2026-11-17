@@ -1,0 +1,30 @@
+=== R22 run 1 ===
+Limit  (cost=4043.36..4044.37 rows=25 width=28) (actual time=8.789..8.791 rows=25 loops=1)
+  Buffers: shared hit=133 read=553 dirtied=43
+  ->  Index Only Scan using idx_applications_recent on applications  (cost=0.42..6064.18 rows=149984 width=28) (actual time=0.026..6.855 rows=100025 loops=1)
+        Heap Fetches: 8666
+        Buffers: shared hit=133 read=553 dirtied=43
+Planning:
+  Buffers: shared hit=190
+Planning Time: 0.294 ms
+Execution Time: 8.803 ms
+=== R22 run 2 ===
+Limit  (cost=4043.36..4044.37 rows=25 width=28) (actual time=7.436..7.438 rows=25 loops=1)
+  Buffers: shared hit=686
+  ->  Index Only Scan using idx_applications_recent on applications  (cost=0.42..6064.18 rows=149984 width=28) (actual time=0.025..5.372 rows=100025 loops=1)
+        Heap Fetches: 8666
+        Buffers: shared hit=686
+Planning:
+  Buffers: shared hit=190
+Planning Time: 0.280 ms
+Execution Time: 7.448 ms
+=== R22 run 3 ===
+Limit  (cost=4043.36..4044.37 rows=25 width=28) (actual time=7.440..7.442 rows=25 loops=1)
+  Buffers: shared hit=686
+  ->  Index Only Scan using idx_applications_recent on applications  (cost=0.42..6064.18 rows=149984 width=28) (actual time=0.025..5.525 rows=100025 loops=1)
+        Heap Fetches: 8666
+        Buffers: shared hit=686
+Planning:
+  Buffers: shared hit=190
+Planning Time: 0.272 ms
+Execution Time: 7.451 ms

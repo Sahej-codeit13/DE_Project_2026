@@ -1,0 +1,31 @@
+query_id,type,avg_ms,median_ms,min_ms,max_ms,scan_nodes
+R01,READ,0.294,0.230,0.171,0.482,Index Scan using members_pkey on members | Index Only Scan using idx_positions_current_member on positions | Index Scan using companies_pkey on companies
+R02,READ,0.293,0.112,0.085,0.682,Index Only Scan using idx_positions_member_start on positions | Index Scan using companies_pkey on companies
+R03,READ,0.517,0.073,0.072,1.407,Bitmap Heap Scan on connections | Bitmap Index Scan on idx_connections_member_a_recent | Bitmap Index Scan on idx_connections_member_b_recent
+R04,READ,0.262,0.308,0.164,0.315,Bitmap Heap Scan on connections | Bitmap Index Scan on idx_connections_member_a_recent | Bitmap Index Scan on idx_connections_member_b_recent
+R05,READ,3.130,1.111,0.855,7.425,Bitmap Heap Scan on connections | Bitmap Index Scan on idx_connections_member_a_recent | Bitmap Index Scan on idx_connections_member_b_recent
+R06,READ,2.248,1.968,1.938,2.838,Index Scan using idx_jobs_open_closes on jobs | Index Scan using companies_pkey on companies
+R07,READ,4.006,4.085,3.649,4.285,Index Only Scan using member_skills_pkey on member_skills | Index Only Scan using idx_job_skills_skill_job on job_skills | Index Scan using idx_jobs_open_closes on jobs
+R08,READ,0.344,0.133,0.125,0.775,Index Scan using idx_applications_job_applied on applications
+R09,READ,0.288,0.131,0.130,0.603,Index Only Scan using idx_applications_member_recent on applications | Index Scan using jobs_pkey on jobs | Index Scan using companies_pkey on companies
+R10,READ,0.326,0.151,0.102,0.726,Index Only Scan using idx_invitations_recipient_status on invitations | Index Scan using members_pkey on members
+R11,READ,0.310,0.257,0.123,0.550,Index Only Scan using idx_profile_views_viewed_time on profile_views
+R12,READ,0.572,0.355,0.306,1.056,Seq Scan on companies | Index Only Scan using idx_positions_company_current on positions
+R13,READ,37.090,30.219,24.971,56.081,Seq Scan on members | Seq Scan on profile_views
+R14,READ,3.759,3.508,3.439,4.331,Index Only Scan using idx_applications_hired_updated on applications | Seq Scan on jobs | Seq Scan on companies
+R15,READ,9.715,9.674,9.606,9.866,Seq Scan on jobs | Index Only Scan using job_skills_pkey on job_skills | Seq Scan on skills
+R16,READ,1.916,1.871,1.842,2.035,Seq Scan on jobs | Seq Scan on cities
+R17,READ,30.701,29.104,27.141,35.859,Index Only Scan using idx_positions_member_start on positions | Seq Scan on companies | Index Scan using companies_pkey on companies
+R18,READ,3.282,2.620,2.561,4.665,Seq Scan on skills | Index Only Scan using idx_member_skills_skill_endorsements on member_skills | Index Scan using members_pkey on members
+R19,READ,3.181,2.826,2.713,4.003,Bitmap Heap Scan on companies | Bitmap Index Scan on idx_companies_industry | Index Only Scan using idx_applications_recent on applications | Seq Scan on jobs | Index Scan using idx_jobs_open_closes on jobs
+R20,READ,1.394,1.428,1.235,1.518,Index Only Scan using idx_applications_recent on applications
+R21,READ,31.506,28.396,23.644,42.478,Index Only Scan using idx_member_skills_skill_endorsements on member_skills | Index Scan using skills_pkey on skills
+R22,READ,7.901,7.451,7.448,8.803,Index Only Scan using idx_applications_recent on applications
+R23,READ,0.122,0.033,0.033,0.299,Index Scan using idx_members_lower_email on members
+R24,READ,12.428,12.401,11.871,13.013,Seq Scan on invitations | Seq Scan on members
+R25,READ,27.312,26.464,23.903,31.570,Index Only Scan using idx_positions_member_start on positions
+W01,WRITE,0.794,0.532,0.487,1.362,(no scan)
+W02,WRITE,0.464,0.278,0.154,0.961,Index Only Scan using idx_invitations_recipient_status on invitations | Index Scan using invitations_pkey on invitations
+W03,WRITE,1.140,1.069,1.053,1.299,Index Only Scan using idx_invitations_recipient_status on invitations | Index Scan using invitations_pkey on invitations
+W04,WRITE,9.633,10.790,5.625,12.483,Index Scan using idx_jobs_open_closes on jobs
+W05,WRITE,20.681,4.658,4.053,53.332,Seq Scan on companies | Bitmap Heap Scan on jobs | Bitmap Index Scan on idx_jobs_company_status | Index Scan using idx_applications_job_applied on applications

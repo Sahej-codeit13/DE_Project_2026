@@ -1,0 +1,84 @@
+=== R18 run 1 ===
+Limit  (cost=1234.22..1234.35 rows=50 width=48) (actual time=4.643..4.647 rows=50 loops=1)
+  Buffers: shared hit=9017 read=14
+  ->  Sort  (cost=1234.22..1234.36 rows=56 width=48) (actual time=4.643..4.644 rows=50 loops=1)
+        Sort Key: ms.endorsements DESC
+        Sort Method: quicksort  Memory: 31kB
+        Buffers: shared hit=9017 read=14
+        ->  Nested Loop  (cost=0.71..1232.59 rows=56 width=48) (actual time=1.748..4.627 rows=69 loops=1)
+              Buffers: shared hit=9014 read=14
+              ->  Nested Loop  (cost=0.42..275.43 rows=2950 width=8) (actual time=0.267..0.895 rows=3004 loops=1)
+                    Buffers: shared hit=2 read=14
+                    ->  Seq Scan on skills s  (cost=0.00..1.90 rows=1 width=4) (actual time=0.004..0.007 rows=1 loops=1)
+                          Filter: ((skill_name)::text = 'SQL'::text)
+                          Rows Removed by Filter: 71
+                          Buffers: shared hit=1
+                    ->  Index Only Scan using idx_member_skills_skill_endorsements on member_skills ms  (cost=0.42..244.03 rows=2950 width=12) (actual time=0.263..0.777 rows=3004 loops=1)
+                          Index Cond: (skill_id = s.skill_id)
+                          Heap Fetches: 0
+                          Buffers: shared hit=1 read=14
+              ->  Index Scan using members_pkey on members m  (cost=0.29..0.32 rows=1 width=44) (actual time=0.001..0.001 rows=0 loops=3004)
+                    Index Cond: (member_id = ms.member_id)
+                    Filter: (open_to_work AND (city_id = 1))
+                    Rows Removed by Filter: 1
+                    Buffers: shared hit=9012
+Planning:
+  Buffers: shared hit=249
+Planning Time: 0.560 ms
+Execution Time: 4.665 ms
+=== R18 run 2 ===
+Limit  (cost=1234.22..1234.35 rows=50 width=48) (actual time=2.531..2.534 rows=50 loops=1)
+  Buffers: shared hit=9031
+  ->  Sort  (cost=1234.22..1234.36 rows=56 width=48) (actual time=2.531..2.532 rows=50 loops=1)
+        Sort Key: ms.endorsements DESC
+        Sort Method: quicksort  Memory: 31kB
+        Buffers: shared hit=9031
+        ->  Nested Loop  (cost=0.71..1232.59 rows=56 width=48) (actual time=0.299..2.517 rows=69 loops=1)
+              Buffers: shared hit=9028
+              ->  Nested Loop  (cost=0.42..275.43 rows=2950 width=8) (actual time=0.012..0.231 rows=3004 loops=1)
+                    Buffers: shared hit=16
+                    ->  Seq Scan on skills s  (cost=0.00..1.90 rows=1 width=4) (actual time=0.004..0.006 rows=1 loops=1)
+                          Filter: ((skill_name)::text = 'SQL'::text)
+                          Rows Removed by Filter: 71
+                          Buffers: shared hit=1
+                    ->  Index Only Scan using idx_member_skills_skill_endorsements on member_skills ms  (cost=0.42..244.03 rows=2950 width=12) (actual time=0.007..0.110 rows=3004 loops=1)
+                          Index Cond: (skill_id = s.skill_id)
+                          Heap Fetches: 0
+                          Buffers: shared hit=15
+              ->  Index Scan using members_pkey on members m  (cost=0.29..0.32 rows=1 width=44) (actual time=0.001..0.001 rows=0 loops=3004)
+                    Index Cond: (member_id = ms.member_id)
+                    Filter: (open_to_work AND (city_id = 1))
+                    Rows Removed by Filter: 1
+                    Buffers: shared hit=9012
+Planning:
+  Buffers: shared hit=249
+Planning Time: 0.504 ms
+Execution Time: 2.561 ms
+=== R18 run 3 ===
+Limit  (cost=1234.22..1234.35 rows=50 width=48) (actual time=2.596..2.599 rows=50 loops=1)
+  Buffers: shared hit=9031
+  ->  Sort  (cost=1234.22..1234.36 rows=56 width=48) (actual time=2.596..2.597 rows=50 loops=1)
+        Sort Key: ms.endorsements DESC
+        Sort Method: quicksort  Memory: 31kB
+        Buffers: shared hit=9031
+        ->  Nested Loop  (cost=0.71..1232.59 rows=56 width=48) (actual time=0.294..2.581 rows=69 loops=1)
+              Buffers: shared hit=9028
+              ->  Nested Loop  (cost=0.42..275.43 rows=2950 width=8) (actual time=0.012..0.235 rows=3004 loops=1)
+                    Buffers: shared hit=16
+                    ->  Seq Scan on skills s  (cost=0.00..1.90 rows=1 width=4) (actual time=0.004..0.006 rows=1 loops=1)
+                          Filter: ((skill_name)::text = 'SQL'::text)
+                          Rows Removed by Filter: 71
+                          Buffers: shared hit=1
+                    ->  Index Only Scan using idx_member_skills_skill_endorsements on member_skills ms  (cost=0.42..244.03 rows=2950 width=12) (actual time=0.008..0.113 rows=3004 loops=1)
+                          Index Cond: (skill_id = s.skill_id)
+                          Heap Fetches: 0
+                          Buffers: shared hit=15
+              ->  Index Scan using members_pkey on members m  (cost=0.29..0.32 rows=1 width=44) (actual time=0.001..0.001 rows=0 loops=3004)
+                    Index Cond: (member_id = ms.member_id)
+                    Filter: (open_to_work AND (city_id = 1))
+                    Rows Removed by Filter: 1
+                    Buffers: shared hit=9012
+Planning:
+  Buffers: shared hit=249
+Planning Time: 0.507 ms
+Execution Time: 2.620 ms

@@ -1,0 +1,54 @@
+=== R20 run 1 ===
+WindowAgg  (cost=951.71..1242.88 rows=8361 width=44) (actual time=1.079..1.390 rows=30 loops=1)
+  Buffers: shared hit=60
+  ->  GroupAggregate  (cost=950.24..1117.46 rows=8361 width=12) (actual time=1.050..1.377 rows=30 loops=1)
+        Group Key: ((applications.applied_at)::date)
+        Buffers: shared hit=60
+        ->  Sort  (cost=950.24..971.14 rows=8361 width=4) (actual time=1.023..1.176 rows=8241 loops=1)
+              Sort Key: ((applications.applied_at)::date)
+              Sort Method: quicksort  Memory: 385kB
+              Buffers: shared hit=60
+              ->  Index Only Scan using idx_applications_recent on applications  (cost=0.42..405.54 rows=8361 width=4) (actual time=0.010..0.740 rows=8241 loops=1)
+                    Index Cond: ((applied_at >= '2026-06-01'::date) AND (applied_at < '2026-07-01'::date))
+                    Heap Fetches: 11
+                    Buffers: shared hit=57
+Planning:
+  Buffers: shared hit=218
+Planning Time: 0.322 ms
+Execution Time: 1.428 ms
+=== R20 run 2 ===
+WindowAgg  (cost=951.71..1242.88 rows=8361 width=44) (actual time=0.902..1.197 rows=30 loops=1)
+  Buffers: shared hit=60
+  ->  GroupAggregate  (cost=950.24..1117.46 rows=8361 width=12) (actual time=0.885..1.183 rows=30 loops=1)
+        Group Key: ((applications.applied_at)::date)
+        Buffers: shared hit=60
+        ->  Sort  (cost=950.24..971.14 rows=8361 width=4) (actual time=0.870..1.004 rows=8241 loops=1)
+              Sort Key: ((applications.applied_at)::date)
+              Sort Method: quicksort  Memory: 385kB
+              Buffers: shared hit=60
+              ->  Index Only Scan using idx_applications_recent on applications  (cost=0.42..405.54 rows=8361 width=4) (actual time=0.011..0.658 rows=8241 loops=1)
+                    Index Cond: ((applied_at >= '2026-06-01'::date) AND (applied_at < '2026-07-01'::date))
+                    Heap Fetches: 11
+                    Buffers: shared hit=57
+Planning:
+  Buffers: shared hit=218
+Planning Time: 0.343 ms
+Execution Time: 1.235 ms
+=== R20 run 3 ===
+WindowAgg  (cost=951.71..1242.88 rows=8361 width=44) (actual time=1.180..1.480 rows=30 loops=1)
+  Buffers: shared hit=60
+  ->  GroupAggregate  (cost=950.24..1117.46 rows=8361 width=12) (actual time=1.164..1.468 rows=30 loops=1)
+        Group Key: ((applications.applied_at)::date)
+        Buffers: shared hit=60
+        ->  Sort  (cost=950.24..971.14 rows=8361 width=4) (actual time=1.151..1.285 rows=8241 loops=1)
+              Sort Key: ((applications.applied_at)::date)
+              Sort Method: quicksort  Memory: 385kB
+              Buffers: shared hit=60
+              ->  Index Only Scan using idx_applications_recent on applications  (cost=0.42..405.54 rows=8361 width=4) (actual time=0.012..0.886 rows=8241 loops=1)
+                    Index Cond: ((applied_at >= '2026-06-01'::date) AND (applied_at < '2026-07-01'::date))
+                    Heap Fetches: 11
+                    Buffers: shared hit=57
+Planning:
+  Buffers: shared hit=218
+Planning Time: 0.295 ms
+Execution Time: 1.518 ms

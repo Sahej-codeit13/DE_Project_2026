@@ -1,0 +1,54 @@
+=== R06 run 1 ===
+Sort  (cost=146.07..146.08 rows=5 width=67) (actual time=2.781..2.784 rows=42 loops=1)
+  Sort Key: j.posted_at DESC
+  Sort Method: quicksort  Memory: 28kB
+  Buffers: shared hit=1774 read=6
+  ->  Nested Loop  (cost=0.56..146.01 rows=5 width=67) (actual time=1.241..2.747 rows=42 loops=1)
+        Buffers: shared hit=1771 read=6
+        ->  Index Scan using idx_jobs_open_closes on jobs j  (cost=0.28..108.53 rows=5 width=52) (actual time=1.218..2.592 rows=42 loops=1)
+              Filter: (((title)::text ~~* '%data analyst%'::text) AND (posted_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND ((city_id = 1) OR ((workplace_type)::text = 'REMOTE'::text)))
+              Rows Removed by Filter: 1736
+              Buffers: shared hit=1645 read=6
+        ->  Index Scan using companies_pkey on companies c  (cost=0.28..7.49 rows=1 width=23) (actual time=0.003..0.003 rows=1 loops=42)
+              Index Cond: (company_id = j.company_id)
+              Buffers: shared hit=126
+Planning:
+  Buffers: shared hit=293 read=5
+Planning Time: 2.684 ms
+Execution Time: 2.838 ms
+=== R06 run 2 ===
+Sort  (cost=146.07..146.08 rows=5 width=67) (actual time=1.884..1.888 rows=42 loops=1)
+  Sort Key: j.posted_at DESC
+  Sort Method: quicksort  Memory: 28kB
+  Buffers: shared hit=1780
+  ->  Nested Loop  (cost=0.56..146.01 rows=5 width=67) (actual time=0.916..1.855 rows=42 loops=1)
+        Buffers: shared hit=1777
+        ->  Index Scan using idx_jobs_open_closes on jobs j  (cost=0.28..108.53 rows=5 width=52) (actual time=0.903..1.738 rows=42 loops=1)
+              Filter: (((title)::text ~~* '%data analyst%'::text) AND (posted_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND ((city_id = 1) OR ((workplace_type)::text = 'REMOTE'::text)))
+              Rows Removed by Filter: 1736
+              Buffers: shared hit=1651
+        ->  Index Scan using companies_pkey on companies c  (cost=0.28..7.49 rows=1 width=23) (actual time=0.002..0.002 rows=1 loops=42)
+              Index Cond: (company_id = j.company_id)
+              Buffers: shared hit=126
+Planning:
+  Buffers: shared hit=298
+Planning Time: 1.133 ms
+Execution Time: 1.938 ms
+=== R06 run 3 ===
+Sort  (cost=146.07..146.08 rows=5 width=67) (actual time=1.919..1.921 rows=42 loops=1)
+  Sort Key: j.posted_at DESC
+  Sort Method: quicksort  Memory: 28kB
+  Buffers: shared hit=1780
+  ->  Nested Loop  (cost=0.56..146.01 rows=5 width=67) (actual time=0.980..1.891 rows=42 loops=1)
+        Buffers: shared hit=1777
+        ->  Index Scan using idx_jobs_open_closes on jobs j  (cost=0.28..108.53 rows=5 width=52) (actual time=0.968..1.782 rows=42 loops=1)
+              Filter: (((title)::text ~~* '%data analyst%'::text) AND (posted_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND ((city_id = 1) OR ((workplace_type)::text = 'REMOTE'::text)))
+              Rows Removed by Filter: 1736
+              Buffers: shared hit=1651
+        ->  Index Scan using companies_pkey on companies c  (cost=0.28..7.49 rows=1 width=23) (actual time=0.002..0.002 rows=1 loops=42)
+              Index Cond: (company_id = j.company_id)
+              Buffers: shared hit=126
+Planning:
+  Buffers: shared hit=298
+Planning Time: 1.144 ms
+Execution Time: 1.968 ms
