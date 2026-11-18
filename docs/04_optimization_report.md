@@ -90,11 +90,23 @@ Replaced the window-function approach with a LATERAL subquery
 that finds the next position for each TCS employee using the
 member and start-date index.
 
-### R19 — Company application and open-job counts
+### R19 — Before and after execution plan
 
-Used grouped common table expressions and joins to calculate
-company-level counts. The June application filter uses a
-half-open date range from June 1 inclusive to July 1 exclusive.
+The original query used correlated subqueries for every IT Services
+company. PostgreSQL scanned the companies table and repeatedly scanned
+the jobs table to calculate open jobs and June application counts.
+The plan recorded 106,834 shared buffer hits and an average execution
+time of 226.472 ms.
+
+The optimized query uses a set-based approach with a CTE, joins,
+aggregation, and a half-open June 2026 date range. PostgreSQL uses
+`idx_applications_recent` through an Index Only Scan and
+`idx_companies_industry` through a Bitmap Index Scan. The open-job
+calculation uses `idx_jobs_open_closes`.
+
+The optimized plan recorded 1,962 shared buffer hits and an average
+execution time of 5.740 ms. This represents approximately 39.5x
+faster execution and a 98.2% reduction in shared buffer hits.
 
 ### R21 — Highest-endorsed member per skill
 
