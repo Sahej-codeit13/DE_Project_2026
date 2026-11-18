@@ -177,3 +177,191 @@ performance improvement.
 All measurements are specific to this database, dataset,
 PostgreSQL configuration, and five-run benchmark. Execution
 times may vary between runs.
+
+## 9. Before and After Execution Plan Evidence
+
+The following five queries produced the largest measured read-query
+speedups. Average execution times are taken from the five-run benchmark
+summary. Buffer counts are from the saved EXPLAIN ANALYZE plans.
+
+### R21 — Highest-endorsed member per skill
+
+- Average execution time: 83.054 ms -> 0.849 ms (97.83x faster).
+- Original plan: Sequential Scan of 212,417 member_skills rows,
+  followed by a Sort and WindowAgg.
+- The sort used an external merge and spilled 6,544 kB to disk.
+- Original plan: 1,188 shared buffer hits, with temporary reads
+  and writes.
+- Optimized plan: Nested Loop over 72 skills, with a Limit and
+  Index Only Scan using idx_member_skills_skill_endorsements.
+- Optimized plan: 221 shared buffer hits and zero heap fetches.
+
+The LATERAL query retrieves only the highest-ranked member for each
+skill instead of sorting and processing the complete member_skills
+table for a window calculation.
+
+### R04 — Connection lookup in both directions
+
+- Average execution time: 14.369 ms -> 0.154 ms (93.31x faster).
+- Original plan: Parallel Sequential Scans on connections for both
+  connection directions.
+- Original plan: 2,593 shared buffer hits.
+- Optimized plan: Bitmap Heap Scans combined with BitmapOr.
+- The bitmap operations use idx_connections_member_a_recent and
+  idx_connections_member_b_recent.
+- Optimized plan: 38 shared buffer hits.
+
+The two composite indexes allow PostgreSQL to locate matching
+connections without scanning the entire table twice.
+
+### R02 — Latest position lookup
+
+- Average execution time: 8.599 ms -> 0.096 ms (89.57x faster).
+- Original plan: Sequential Scan on positions followed by a Sort
+  on start_date DESC.
+- Original plan: 991 shared buffer hits.
+- Optimized plan: Index Only Scan Backward using
+  idx_positions_member_start.
+- Optimized plan: 16 shared buffer hits.
+
+The index ordering allows PostgreSQL to retrieve the latest position
+directly, avoiding the full table scan and sort.
+
+### R01 — Current position lookup
+
+- Average execution time: 9.430 ms -> 0.107 ms (88.13x faster).
+- Original plan: Sequential Scan on positions, with 982 shared
+  buffer hits.
+- Optimized plan: Index Only Scan using
+  idx_positions_current_member.
+- The member and company lookups use their primary-key indexes.
+- Optimized plan: 9 shared buffer hits.
+
+The current-position index allows the query to locate the required
+position directly rather than scanning all position records.
+
+### R23 — Case-insensitive email lookup
+
+- Average execution time: 7.176 ms -> 0.092 ms (78.00x faster).
+- Original plan: Sequential Scan on members.
+- Original plan: 656 shared buffer hits.
+- Optimized plan: Index Scan using idx_members_lower_email.
+- Optimized plan: 4 shared buffer hits.
+
+The expression index on lower(email) supports the case-insensitive
+lookup and avoids scanning the members table.
+
+### Additional improvement — R19
+
+R19 improved from 226.472 ms to 5.740 ms (39.46x faster).
+The original correlated subqueries repeatedly accessed jobs and
+applications for each IT Services company. The optimized set-based
+query uses joins, aggregation, and indexes. Shared buffer hits
+decreased from 106,834 to 1,962.
+
+## 10. Query Equivalence and Correctness Verification
+
+EXCEPT ALL comparisons were used to compare the original and
+optimized result sets. A zero difference means both versions
+returned the same rows, including duplicate counts.
+
+| Query | Original rows | Optimized rows | Differing rows |
+|---|---:|---:|---:|
+| R17 | 15 | 15 | 0 |
+| R19 | 200 | 200 | 0 |
+| R20 | 30 | 30 | 0 |
+| R21 | 72 | 72 | 0 |
+| R24 | 2 | 2 | 0 |
+
+R13 is an intentional correctness fix rather than an equivalent
+rewrite. The original NOT IN subquery contained 50,173 NULL
+viewer IDs. Because of SQL NULL semantics, the original query
+returned zero rows. The corrected NOT EXISTS query returned
+6,513 members who had never viewed another profile.
+
+The R13 difference is therefore expected and fixes incorrect
+original behavior.
+
+R15 changes the year filter to a half-open timestamp range.
+R20 changes its date filtering to a half-open range. R24 adds
+an upper date boundary. In the current dataset, no existing
+rows are excluded by the added upper boundaries.
+
+## 11. Index Storage Measurements
+
+The following sizes were measured using PostgreSQL relation sizes.
+The table size column represents the table heap, excluding indexes.
+The percentage compares each index size with its table heap size.
+
+| Table | Index | Index size | Table heap | Index / heap |
+|---|---|---:|---:|---:|
+| applications | idx_applications_member_recent | 8,888 kB | 11 MB | 78.9% |
+| applications | idx_applications_recent | 7,584 kB | 11 MB | 67.3% |
+| applications | idx_applications_job_applied | 4,640 kB | 11 MB | 41.2% |
+| applications | applications_pkey | 3,312 kB | 11 MB | 29.4% |
+| applications | applications_job_member_unique | 3,312 kB | 11 MB | 29.4% |
+| applications | idx_applications_hired_updated | 312 kB | 11 MB | 2.8% |
+| cities | cities_pkey | 16 kB | 8 kB | 200% |
+| companies | idx_companies_industry | 120 kB | 208 kB | 57.7% |
+| companies | companies_pkey | 64 kB | 208 kB | 30.8% |
+| connections | idx_connections_member_a_recent | 8,744 kB | 9,984 kB | 87.6% |
+| connections | idx_connections_member_b_recent | 8,744 kB | 9,984 kB | 87.6% |
+| connections | connections_pkey | 4,840 kB | 9,984 kB | 48.5% |
+| invitations | idx_invitations_recipient_status | 4,256 kB | 5,152 kB | 82.6% |
+| invitations | idx_invitations_sender_sent | 2,768 kB | 5,152 kB | 53.7% |
+| invitations | invitations_pkey | 1,328 kB | 5,152 kB | 25.8% |
+| job_skills | job_skills_pkey | 1,456 kB | 2,328 kB | 62.5% |
+| job_skills | idx_job_skills_skill_job | 1,456 kB | 2,328 kB | 62.5% |
+| jobs | idx_jobs_company_status | 408 kB | 2,104 kB | 19.4% |
+| jobs | jobs_pkey | 344 kB | 2,104 kB | 16.3% |
+| jobs | idx_jobs_open_closes | 56 kB | 2,104 kB | 2.7% |
+| member_skills | idx_member_skills_skill_endorsements | 6,560 kB | 9,472 kB | 69.3% |
+| member_skills | member_skills_pkey | 4,680 kB | 9,472 kB | 49.4% |
+| members | members_email_key | 2,352 kB | 5,248 kB | 44.8% |
+| members | idx_members_lower_email | 1,952 kB | 5,248 kB | 37.2% |
+| members | members_pkey | 896 kB | 5,248 kB | 17.1% |
+| positions | idx_positions_member_start | 6,456 kB | 7,808 kB | 82.7% |
+| positions | positions_pkey | 2,200 kB | 7,808 kB | 28.2% |
+| positions | idx_positions_current_member | 1,584 kB | 7,808 kB | 20.3% |
+| positions | idx_positions_company_current | 1,072 kB | 7,808 kB | 13.7% |
+| profile_views | idx_profile_views_viewed_time | 7,944 kB | 10,112 kB | 78.6% |
+| profile_views | profile_views_pkey | 4,408 kB | 10,112 kB | 43.6% |
+| profile_views | idx_profile_views_viewer | 2,160 kB | 10,112 kB | 21.4% |
+| skills | skills_skill_name_key | 16 kB | 8 kB | 200% |
+| skills | skills_pkey | 16 kB | 8 kB | 200% |
+
+The combined index storage is approximately 102 MB. The database
+occupies approximately 171 MB. Small tables can have indexes larger
+than their heap because indexes have their own page and storage
+overhead. This is why the ratio can exceed 100%.
+
+## 12. Queries With Regressions and Remaining Limitations
+
+Three read queries were slower after optimization:
+
+- R15: 8.642 ms -> 16.056 ms. Rewriting the year extraction as a
+  timestamp range did not guarantee an index scan. PostgreSQL may
+  still prefer a sequential scan when it estimates that reading
+  the table is cheaper.
+- R16: 2.040 ms -> 3.257 ms. This query regressed in the measured
+  benchmark. The timing should be monitored rather than assuming
+  that every index or rewrite improves every workload.
+- R24: 10.775 ms -> 19.303 ms. A substantial portion of invitations
+  matches the date condition, so a sequential scan and hash-based
+  processing can be cheaper than using an index.
+
+The write queries W01 and W04 also regressed:
+
+- W01: 0.490 ms -> 0.594 ms (21.2% slower).
+- W04: 6.299 ms -> 7.029 ms (11.6% slower).
+
+Additional indexes require PostgreSQL to maintain index entries
+during inserts, updates, and deletes. This creates storage and
+write-maintenance overhead. The measured regressions are small
+in absolute milliseconds, but should be monitored with larger
+datasets and heavier write workloads.
+
+The benchmark results are specific to the current dataset,
+PostgreSQL configuration, and five-run test procedure. The
+large-data workload should be used to reassess index selectivity,
+query plans, storage, and write overhead at scale.
