@@ -1,4 +1,3 @@
-cat > docs/04_optimization_report.md <<'EOF'
 # Database Optimization Report
 
 ## 1. Overview
@@ -178,4 +177,3 @@ performance improvement.
 All measurements are specific to this database, dataset,
 PostgreSQL configuration, and five-run benchmark. Execution
 times may vary between runs.
-EOF

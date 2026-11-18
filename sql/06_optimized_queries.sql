@@ -125,10 +125,15 @@ WHERE c.company_name = 'Flipkart' AND p.end_date IS NULL
 GROUP BY c.company_name;
 
 -- @R13
--- Engagement: members who have never viewed anyone's profile (for a re-engagement nudge)
+-- Engagement: members who have never viewed anyone's profile
+-- NOT EXISTS avoids the NULL-related bug in the original NOT IN query.
 SELECT m.member_id, m.first_name, m.last_name
 FROM members m
-WHERE m.member_id NOT IN (SELECT v.viewer_id FROM profile_views v);
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM profile_views v
+    WHERE v.viewer_id = m.member_id
+);
 
 -- @R14
 -- Talent insights: average days from application to hire, per company (2026 hires)
@@ -166,15 +171,23 @@ ORDER BY j.title, avg_max_lpa DESC NULLS LAST;
 
 -- @R17
 -- Talent flow: companies people joined right after leaving TCS
-SELECT nxt.company_name, count(*) AS moved
-FROM (
-    SELECT p.member_id, p.company_id,
-           lead(p.company_id) OVER (PARTITION BY p.member_id ORDER BY p.start_date) AS next_company_id
-    FROM positions p
-) t
-JOIN companies cur ON cur.company_id = t.company_id AND cur.company_name = 'TCS'
-JOIN companies nxt ON nxt.company_id = t.next_company_id
-WHERE t.next_company_id <> t.company_id
+-- LATERAL finds each TCS employee's next position using the member/start-date index.
+SELECT nxt.company_name, COUNT(*) AS moved
+FROM positions tcs
+JOIN companies cur
+    ON cur.company_id = tcs.company_id
+   AND cur.company_name = 'TCS'
+JOIN LATERAL (
+    SELECT p2.company_id
+    FROM positions p2
+    WHERE p2.member_id = tcs.member_id
+      AND p2.start_date > tcs.start_date
+    ORDER BY p2.start_date
+    LIMIT 1
+) next_position ON TRUE
+JOIN companies nxt
+    ON nxt.company_id = next_position.company_id
+WHERE next_position.company_id <> tcs.company_id
 GROUP BY nxt.company_name
 ORDER BY moved DESC
 LIMIT 15;
@@ -209,6 +222,7 @@ june_application_counts AS (
     JOIN it_companies c ON c.company_id = j.company_id
     JOIN applications a ON a.job_id = j.job_id
     WHERE a.applied_at >= DATE '2026-06-01'
+      AND a.applied_at < DATE '2026-07-01'
     GROUP BY j.company_id
 )
 SELECT c.company_id, c.company_name,
@@ -233,15 +247,17 @@ ORDER BY day;
 
 -- @R21
 -- Skills pages: the most-endorsed member for each skill
-SELECT skill_name, member_id, endorsements
-FROM (
-    SELECT DISTINCT ON (ms.skill_id)
-           s.skill_name, ms.member_id, ms.endorsements
+-- LATERAL uses the skill/endorsement index to fetch the top member per skill.
+SELECT s.skill_name, best.member_id, best.endorsements
+FROM skills s
+CROSS JOIN LATERAL (
+    SELECT ms.member_id, ms.endorsements
     FROM member_skills ms
-    JOIN skills s ON s.skill_id = ms.skill_id
-    ORDER BY ms.skill_id, ms.endorsements DESC, ms.member_id
-) t
-ORDER BY endorsements DESC;
+    WHERE ms.skill_id = s.skill_id
+    ORDER BY ms.endorsements DESC, ms.member_id
+    LIMIT 1
+) best
+ORDER BY best.endorsements DESC;
 
 -- @R22
 -- Trust & safety console: all applications, newest first, page 4,001 (25 per page)
@@ -263,7 +279,8 @@ SELECT m.is_premium, count(*) AS invitations,
        round(100.0 * count(*) FILTER (WHERE i.status = 'ACCEPTED') / count(*), 1) AS accept_pct
 FROM invitations i
 JOIN members m ON m.member_id = i.sender_id
-WHERE i.sent_at >= '2026-01-01'
+WHERE i.sent_at >= DATE '2026-01-01'
+  AND i.sent_at < DATE '2027-01-01'
 GROUP BY m.is_premium;
 
 -- @R25

@@ -1,153 +1,260 @@
 === R05 run 1 ===
-Limit  (cost=993.79..993.84 rows=20 width=12) (actual time=7.276..7.284 rows=20 loops=1)
-  Buffers: shared hit=151 read=36
+Limit  (cost=993.79..993.84 rows=20 width=12) (actual time=0.672..0.676 rows=20 loops=1)
+  Buffers: shared hit=210
   CTE my_conn
-    ->  Bitmap Heap Scan on connections  (cost=8.96..64.29 rows=15 width=4) (actual time=0.037..0.042 rows=14 loops=1)
+    ->  Bitmap Heap Scan on connections  (cost=8.96..64.29 rows=15 width=4) (actual time=0.038..0.065 rows=14 loops=1)
           Recheck Cond: ((member_a = 1023) OR (member_b = 1023))
-          Heap Blocks: exact=1
-          Buffers: shared hit=7
-          ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.023..0.024 rows=0 loops=1)
+          Heap Blocks: exact=24
+          Buffers: shared hit=30
+          ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.028..0.029 rows=0 loops=1)
                 Buffers: shared hit=6
-                ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.48 rows=8 width=0) (actual time=0.014..0.015 rows=14 loops=1)
+                ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.48 rows=8 width=0) (actual time=0.011..0.011 rows=37 loops=1)
                       Index Cond: (member_a = 1023)
                       Buffers: shared hit=3
-                ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.008..0.008 rows=0 loops=1)
+                ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.017..0.017 rows=0 loops=1)
                       Index Cond: (member_b = 1023)
                       Buffers: shared hit=3
-  ->  Sort  (cost=929.50..929.79 rows=115 width=12) (actual time=7.274..7.278 rows=20 loops=1)
+  ->  Sort  (cost=929.50..929.79 rows=115 width=12) (actual time=0.671..0.672 rows=20 loops=1)
         Sort Key: (count(*)) DESC, (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
         Sort Method: top-N heapsort  Memory: 25kB
-        Buffers: shared hit=151 read=36
-        ->  GroupAggregate  (cost=924.14..926.44 rows=115 width=12) (actual time=7.115..7.204 rows=127 loops=1)
+        Buffers: shared hit=210
+        ->  GroupAggregate  (cost=924.14..926.44 rows=115 width=12) (actual time=0.608..0.641 rows=127 loops=1)
               Group Key: (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
-              Buffers: shared hit=145 read=36
-              ->  Sort  (cost=924.14..924.43 rows=115 width=4) (actual time=6.893..6.909 rows=127 loops=1)
+              Buffers: shared hit=204
+              ->  Sort  (cost=924.14..924.43 rows=115 width=4) (actual time=0.600..0.605 rows=127 loops=1)
                     Sort Key: (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
                     Sort Method: quicksort  Memory: 25kB
-                    Buffers: shared hit=145 read=36
-                    ->  Nested Loop  (cost=9.30..920.21 rows=115 width=4) (actual time=0.664..6.853 rows=127 loops=1)
-                          Buffers: shared hit=145 read=36
-                          ->  CTE Scan on my_conn mc  (cost=0.00..0.30 rows=15 width=4) (actual time=0.039..0.045 rows=14 loops=1)
+                    Buffers: shared hit=204
+                    ->  Nested Loop  (cost=9.30..920.21 rows=115 width=4) (actual time=0.104..0.585 rows=127 loops=1)
+                          Buffers: shared hit=204
+                          ->  CTE Scan on my_conn mc  (cost=0.00..0.30 rows=15 width=4) (actual time=0.039..0.041 rows=14 loops=1)
                                 Buffers: shared hit=7
-                          ->  Bitmap Heap Scan on connections c  (cost=9.30..61.23 rows=8 width=8) (actual time=0.437..0.479 rows=9 loops=14)
+                          ->  Bitmap Heap Scan on connections c  (cost=9.30..61.23 rows=8 width=8) (actual time=0.016..0.037 rows=9 loops=14)
                                 Recheck Cond: ((member_a = mc.f) OR (member_b = mc.f))
                                 Filter: ((CASE WHEN (member_a = mc.f) THEN member_b ELSE member_a END <> 1023) AND (NOT (ANY (CASE WHEN (member_a = mc.f) THEN member_b ELSE member_a END = (hashed SubPlan 2).col1))))
                                 Rows Removed by Filter: 1
                                 Heap Blocks: exact=90
-                                Buffers: shared hit=138 read=36
-                                ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.419..0.419 rows=0 loops=14)
-                                      Buffers: shared hit=48 read=36
-                                      ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.49 rows=9 width=0) (actual time=0.237..0.237 rows=5 loops=14)
+                                Buffers: shared hit=197
+                                ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.009..0.009 rows=0 loops=14)
+                                      Buffers: shared hit=84
+                                      ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.49 rows=9 width=0) (actual time=0.004..0.004 rows=5 loops=14)
                                             Index Cond: (member_a = mc.f)
-                                            Buffers: shared hit=23 read=19
-                                      ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.180..0.180 rows=5 loops=14)
+                                            Buffers: shared hit=42
+                                      ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.004..0.004 rows=5 loops=14)
                                             Index Cond: (member_b = mc.f)
-                                            Buffers: shared hit=25 read=17
+                                            Buffers: shared hit=42
                                 SubPlan 2
-                                  ->  CTE Scan on my_conn  (cost=0.00..0.30 rows=15 width=4) (actual time=0.001..0.009 rows=14 loops=1)
+                                  ->  CTE Scan on my_conn  (cost=0.00..0.30 rows=15 width=4) (actual time=0.000..0.029 rows=14 loops=1)
+                                        Buffers: shared hit=23
 Planning:
   Buffers: shared hit=152
-Planning Time: 1.275 ms
-Execution Time: 7.425 ms
+Planning Time: 0.535 ms
+Execution Time: 0.744 ms
 === R05 run 2 ===
-Limit  (cost=993.79..993.84 rows=20 width=12) (actual time=0.721..0.724 rows=20 loops=1)
-  Buffers: shared hit=187
+Limit  (cost=993.79..993.84 rows=20 width=12) (actual time=0.650..0.656 rows=20 loops=1)
+  Buffers: shared hit=210
   CTE my_conn
-    ->  Bitmap Heap Scan on connections  (cost=8.96..64.29 rows=15 width=4) (actual time=0.035..0.039 rows=14 loops=1)
+    ->  Bitmap Heap Scan on connections  (cost=8.96..64.29 rows=15 width=4) (actual time=0.036..0.079 rows=14 loops=1)
           Recheck Cond: ((member_a = 1023) OR (member_b = 1023))
-          Heap Blocks: exact=1
-          Buffers: shared hit=7
-          ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.022..0.022 rows=0 loops=1)
+          Heap Blocks: exact=24
+          Buffers: shared hit=30
+          ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.021..0.022 rows=0 loops=1)
                 Buffers: shared hit=6
-                ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.48 rows=8 width=0) (actual time=0.013..0.013 rows=14 loops=1)
+                ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.48 rows=8 width=0) (actual time=0.014..0.014 rows=37 loops=1)
                       Index Cond: (member_a = 1023)
                       Buffers: shared hit=3
-                ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.007..0.008 rows=0 loops=1)
+                ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.006..0.006 rows=0 loops=1)
                       Index Cond: (member_b = 1023)
                       Buffers: shared hit=3
-  ->  Sort  (cost=929.50..929.79 rows=115 width=12) (actual time=0.720..0.721 rows=20 loops=1)
+  ->  Sort  (cost=929.50..929.79 rows=115 width=12) (actual time=0.648..0.651 rows=20 loops=1)
         Sort Key: (count(*)) DESC, (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
         Sort Method: top-N heapsort  Memory: 25kB
-        Buffers: shared hit=187
-        ->  GroupAggregate  (cost=924.14..926.44 rows=115 width=12) (actual time=0.634..0.671 rows=127 loops=1)
+        Buffers: shared hit=210
+        ->  GroupAggregate  (cost=924.14..926.44 rows=115 width=12) (actual time=0.577..0.613 rows=127 loops=1)
               Group Key: (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
-              Buffers: shared hit=181
-              ->  Sort  (cost=924.14..924.43 rows=115 width=4) (actual time=0.628..0.634 rows=127 loops=1)
+              Buffers: shared hit=204
+              ->  Sort  (cost=924.14..924.43 rows=115 width=4) (actual time=0.567..0.574 rows=127 loops=1)
                     Sort Key: (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
                     Sort Method: quicksort  Memory: 25kB
-                    Buffers: shared hit=181
-                    ->  Nested Loop  (cost=9.30..920.21 rows=115 width=4) (actual time=0.103..0.599 rows=127 loops=1)
-                          Buffers: shared hit=181
-                          ->  CTE Scan on my_conn mc  (cost=0.00..0.30 rows=15 width=4) (actual time=0.037..0.040 rows=14 loops=1)
+                    Buffers: shared hit=204
+                    ->  Nested Loop  (cost=9.30..920.21 rows=115 width=4) (actual time=0.166..0.550 rows=127 loops=1)
+                          Buffers: shared hit=204
+                          ->  CTE Scan on my_conn mc  (cost=0.00..0.30 rows=15 width=4) (actual time=0.038..0.040 rows=14 loops=1)
                                 Buffers: shared hit=7
-                          ->  Bitmap Heap Scan on connections c  (cost=9.30..61.23 rows=8 width=8) (actual time=0.021..0.036 rows=9 loops=14)
+                          ->  Bitmap Heap Scan on connections c  (cost=9.30..61.23 rows=8 width=8) (actual time=0.023..0.034 rows=9 loops=14)
                                 Recheck Cond: ((member_a = mc.f) OR (member_b = mc.f))
                                 Filter: ((CASE WHEN (member_a = mc.f) THEN member_b ELSE member_a END <> 1023) AND (NOT (ANY (CASE WHEN (member_a = mc.f) THEN member_b ELSE member_a END = (hashed SubPlan 2).col1))))
                                 Rows Removed by Filter: 1
                                 Heap Blocks: exact=90
-                                Buffers: shared hit=174
-                                ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.013..0.013 rows=0 loops=14)
+                                Buffers: shared hit=197
+                                ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.014..0.014 rows=0 loops=14)
                                       Buffers: shared hit=84
-                                      ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.49 rows=9 width=0) (actual time=0.006..0.006 rows=5 loops=14)
+                                      ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.49 rows=9 width=0) (actual time=0.005..0.005 rows=5 loops=14)
+                                            Index Cond: (member_a = mc.f)
+                                            Buffers: shared hit=42
+                                      ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.008..0.008 rows=5 loops=14)
+                                            Index Cond: (member_b = mc.f)
+                                            Buffers: shared hit=42
+                                SubPlan 2
+                                  ->  CTE Scan on my_conn  (cost=0.00..0.30 rows=15 width=4) (actual time=0.000..0.045 rows=14 loops=1)
+                                        Buffers: shared hit=23
+Planning:
+  Buffers: shared hit=152
+Planning Time: 2.934 ms
+Execution Time: 0.779 ms
+=== R05 run 3 ===
+Limit  (cost=993.79..993.84 rows=20 width=12) (actual time=0.570..0.574 rows=20 loops=1)
+  Buffers: shared hit=210
+  CTE my_conn
+    ->  Bitmap Heap Scan on connections  (cost=8.96..64.29 rows=15 width=4) (actual time=0.032..0.073 rows=14 loops=1)
+          Recheck Cond: ((member_a = 1023) OR (member_b = 1023))
+          Heap Blocks: exact=24
+          Buffers: shared hit=30
+          ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.020..0.020 rows=0 loops=1)
+                Buffers: shared hit=6
+                ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.48 rows=8 width=0) (actual time=0.013..0.013 rows=37 loops=1)
+                      Index Cond: (member_a = 1023)
+                      Buffers: shared hit=3
+                ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.006..0.006 rows=0 loops=1)
+                      Index Cond: (member_b = 1023)
+                      Buffers: shared hit=3
+  ->  Sort  (cost=929.50..929.79 rows=115 width=12) (actual time=0.568..0.570 rows=20 loops=1)
+        Sort Key: (count(*)) DESC, (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
+        Sort Method: top-N heapsort  Memory: 25kB
+        Buffers: shared hit=210
+        ->  GroupAggregate  (cost=924.14..926.44 rows=115 width=12) (actual time=0.501..0.535 rows=127 loops=1)
+              Group Key: (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
+              Buffers: shared hit=204
+              ->  Sort  (cost=924.14..924.43 rows=115 width=4) (actual time=0.489..0.496 rows=127 loops=1)
+                    Sort Key: (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
+                    Sort Method: quicksort  Memory: 25kB
+                    Buffers: shared hit=204
+                    ->  Nested Loop  (cost=9.30..920.21 rows=115 width=4) (actual time=0.103..0.473 rows=127 loops=1)
+                          Buffers: shared hit=204
+                          ->  CTE Scan on my_conn mc  (cost=0.00..0.30 rows=15 width=4) (actual time=0.034..0.035 rows=14 loops=1)
+                                Buffers: shared hit=7
+                          ->  Bitmap Heap Scan on connections c  (cost=9.30..61.23 rows=8 width=8) (actual time=0.018..0.029 rows=9 loops=14)
+                                Recheck Cond: ((member_a = mc.f) OR (member_b = mc.f))
+                                Filter: ((CASE WHEN (member_a = mc.f) THEN member_b ELSE member_a END <> 1023) AND (NOT (ANY (CASE WHEN (member_a = mc.f) THEN member_b ELSE member_a END = (hashed SubPlan 2).col1))))
+                                Rows Removed by Filter: 1
+                                Heap Blocks: exact=90
+                                Buffers: shared hit=197
+                                ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.011..0.011 rows=0 loops=14)
+                                      Buffers: shared hit=84
+                                      ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.49 rows=9 width=0) (actual time=0.005..0.005 rows=5 loops=14)
                                             Index Cond: (member_a = mc.f)
                                             Buffers: shared hit=42
                                       ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.006..0.006 rows=5 loops=14)
                                             Index Cond: (member_b = mc.f)
                                             Buffers: shared hit=42
                                 SubPlan 2
-                                  ->  CTE Scan on my_conn  (cost=0.00..0.30 rows=15 width=4) (actual time=0.000..0.009 rows=14 loops=1)
+                                  ->  CTE Scan on my_conn  (cost=0.00..0.30 rows=15 width=4) (actual time=0.000..0.042 rows=14 loops=1)
+                                        Buffers: shared hit=23
 Planning:
   Buffers: shared hit=152
-Planning Time: 1.279 ms
-Execution Time: 0.855 ms
-=== R05 run 3 ===
-Limit  (cost=993.79..993.84 rows=20 width=12) (actual time=1.025..1.031 rows=20 loops=1)
-  Buffers: shared hit=187
+Planning Time: 0.588 ms
+Execution Time: 0.656 ms
+=== R05 run 4 ===
+Limit  (cost=993.79..993.84 rows=20 width=12) (actual time=0.587..0.591 rows=20 loops=1)
+  Buffers: shared hit=210
   CTE my_conn
-    ->  Bitmap Heap Scan on connections  (cost=8.96..64.29 rows=15 width=4) (actual time=0.024..0.026 rows=14 loops=1)
+    ->  Bitmap Heap Scan on connections  (cost=8.96..64.29 rows=15 width=4) (actual time=0.038..0.077 rows=14 loops=1)
           Recheck Cond: ((member_a = 1023) OR (member_b = 1023))
-          Heap Blocks: exact=1
-          Buffers: shared hit=7
-          ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.017..0.017 rows=0 loops=1)
+          Heap Blocks: exact=24
+          Buffers: shared hit=30
+          ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.024..0.025 rows=0 loops=1)
                 Buffers: shared hit=6
-                ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.48 rows=8 width=0) (actual time=0.010..0.010 rows=14 loops=1)
+                ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.48 rows=8 width=0) (actual time=0.016..0.016 rows=37 loops=1)
                       Index Cond: (member_a = 1023)
                       Buffers: shared hit=3
-                ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.006..0.006 rows=0 loops=1)
+                ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.007..0.007 rows=0 loops=1)
                       Index Cond: (member_b = 1023)
                       Buffers: shared hit=3
-  ->  Sort  (cost=929.50..929.79 rows=115 width=12) (actual time=1.024..1.027 rows=20 loops=1)
+  ->  Sort  (cost=929.50..929.79 rows=115 width=12) (actual time=0.585..0.587 rows=20 loops=1)
         Sort Key: (count(*)) DESC, (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
         Sort Method: top-N heapsort  Memory: 25kB
-        Buffers: shared hit=187
-        ->  GroupAggregate  (cost=924.14..926.44 rows=115 width=12) (actual time=0.911..0.979 rows=127 loops=1)
+        Buffers: shared hit=210
+        ->  GroupAggregate  (cost=924.14..926.44 rows=115 width=12) (actual time=0.513..0.548 rows=127 loops=1)
               Group Key: (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
-              Buffers: shared hit=181
-              ->  Sort  (cost=924.14..924.43 rows=115 width=4) (actual time=0.902..0.913 rows=127 loops=1)
+              Buffers: shared hit=204
+              ->  Sort  (cost=924.14..924.43 rows=115 width=4) (actual time=0.504..0.511 rows=127 loops=1)
                     Sort Key: (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
                     Sort Method: quicksort  Memory: 25kB
-                    Buffers: shared hit=181
-                    ->  Nested Loop  (cost=9.30..920.21 rows=115 width=4) (actual time=0.196..0.874 rows=127 loops=1)
-                          Buffers: shared hit=181
-                          ->  CTE Scan on my_conn mc  (cost=0.00..0.30 rows=15 width=4) (actual time=0.026..0.028 rows=14 loops=1)
+                    Buffers: shared hit=204
+                    ->  Nested Loop  (cost=9.30..920.21 rows=115 width=4) (actual time=0.116..0.488 rows=127 loops=1)
+                          Buffers: shared hit=204
+                          ->  CTE Scan on my_conn mc  (cost=0.00..0.30 rows=15 width=4) (actual time=0.041..0.043 rows=14 loops=1)
                                 Buffers: shared hit=7
-                          ->  Bitmap Heap Scan on connections c  (cost=9.30..61.23 rows=8 width=8) (actual time=0.036..0.057 rows=9 loops=14)
+                          ->  Bitmap Heap Scan on connections c  (cost=9.30..61.23 rows=8 width=8) (actual time=0.018..0.030 rows=9 loops=14)
                                 Recheck Cond: ((member_a = mc.f) OR (member_b = mc.f))
                                 Filter: ((CASE WHEN (member_a = mc.f) THEN member_b ELSE member_a END <> 1023) AND (NOT (ANY (CASE WHEN (member_a = mc.f) THEN member_b ELSE member_a END = (hashed SubPlan 2).col1))))
                                 Rows Removed by Filter: 1
                                 Heap Blocks: exact=90
-                                Buffers: shared hit=174
-                                ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.019..0.019 rows=0 loops=14)
+                                Buffers: shared hit=197
+                                ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.010..0.011 rows=0 loops=14)
                                       Buffers: shared hit=84
-                                      ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.49 rows=9 width=0) (actual time=0.009..0.009 rows=5 loops=14)
+                                      ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.49 rows=9 width=0) (actual time=0.005..0.005 rows=5 loops=14)
                                             Index Cond: (member_a = mc.f)
                                             Buffers: shared hit=42
-                                      ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.010..0.010 rows=5 loops=14)
+                                      ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.005..0.005 rows=5 loops=14)
                                             Index Cond: (member_b = mc.f)
                                             Buffers: shared hit=42
                                 SubPlan 2
-                                  ->  CTE Scan on my_conn  (cost=0.00..0.30 rows=15 width=4) (actual time=0.000..0.004 rows=14 loops=1)
+                                  ->  CTE Scan on my_conn  (cost=0.00..0.30 rows=15 width=4) (actual time=0.000..0.040 rows=14 loops=1)
+                                        Buffers: shared hit=23
 Planning:
   Buffers: shared hit=152
-Planning Time: 0.749 ms
-Execution Time: 1.111 ms
+Planning Time: 0.754 ms
+Execution Time: 0.691 ms
+=== R05 run 5 ===
+Limit  (cost=993.79..993.84 rows=20 width=12) (actual time=0.504..0.508 rows=20 loops=1)
+  Buffers: shared hit=210
+  CTE my_conn
+    ->  Bitmap Heap Scan on connections  (cost=8.96..64.29 rows=15 width=4) (actual time=0.032..0.065 rows=14 loops=1)
+          Recheck Cond: ((member_a = 1023) OR (member_b = 1023))
+          Heap Blocks: exact=24
+          Buffers: shared hit=30
+          ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.022..0.023 rows=0 loops=1)
+                Buffers: shared hit=6
+                ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.48 rows=8 width=0) (actual time=0.017..0.017 rows=37 loops=1)
+                      Index Cond: (member_a = 1023)
+                      Buffers: shared hit=3
+                ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.005..0.005 rows=0 loops=1)
+                      Index Cond: (member_b = 1023)
+                      Buffers: shared hit=3
+  ->  Sort  (cost=929.50..929.79 rows=115 width=12) (actual time=0.503..0.504 rows=20 loops=1)
+        Sort Key: (count(*)) DESC, (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
+        Sort Method: top-N heapsort  Memory: 25kB
+        Buffers: shared hit=210
+        ->  GroupAggregate  (cost=924.14..926.44 rows=115 width=12) (actual time=0.432..0.471 rows=127 loops=1)
+              Group Key: (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
+              Buffers: shared hit=204
+              ->  Sort  (cost=924.14..924.43 rows=115 width=4) (actual time=0.423..0.429 rows=127 loops=1)
+                    Sort Key: (CASE WHEN (c.member_a = mc.f) THEN c.member_b ELSE c.member_a END)
+                    Sort Method: quicksort  Memory: 25kB
+                    Buffers: shared hit=204
+                    ->  Nested Loop  (cost=9.30..920.21 rows=115 width=4) (actual time=0.106..0.408 rows=127 loops=1)
+                          Buffers: shared hit=204
+                          ->  CTE Scan on my_conn mc  (cost=0.00..0.30 rows=15 width=4) (actual time=0.034..0.036 rows=14 loops=1)
+                                Buffers: shared hit=7
+                          ->  Bitmap Heap Scan on connections c  (cost=9.30..61.23 rows=8 width=8) (actual time=0.015..0.024 rows=9 loops=14)
+                                Recheck Cond: ((member_a = mc.f) OR (member_b = mc.f))
+                                Filter: ((CASE WHEN (member_a = mc.f) THEN member_b ELSE member_a END <> 1023) AND (NOT (ANY (CASE WHEN (member_a = mc.f) THEN member_b ELSE member_a END = (hashed SubPlan 2).col1))))
+                                Rows Removed by Filter: 1
+                                Heap Blocks: exact=90
+                                Buffers: shared hit=197
+                                ->  BitmapOr  (cost=8.96..8.96 rows=15 width=0) (actual time=0.009..0.009 rows=0 loops=14)
+                                      Buffers: shared hit=84
+                                      ->  Bitmap Index Scan on idx_connections_member_a_recent  (cost=0.00..4.49 rows=9 width=0) (actual time=0.004..0.004 rows=5 loops=14)
+                                            Index Cond: (member_a = mc.f)
+                                            Buffers: shared hit=42
+                                      ->  Bitmap Index Scan on idx_connections_member_b_recent  (cost=0.00..4.47 rows=7 width=0) (actual time=0.004..0.004 rows=5 loops=14)
+                                            Index Cond: (member_b = mc.f)
+                                            Buffers: shared hit=42
+                                SubPlan 2
+                                  ->  CTE Scan on my_conn  (cost=0.00..0.30 rows=15 width=4) (actual time=0.000..0.034 rows=14 loops=1)
+                                        Buffers: shared hit=23
+Planning:
+  Buffers: shared hit=152
+Planning Time: 1.080 ms
+Execution Time: 0.593 ms
