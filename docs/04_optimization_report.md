@@ -1,3 +1,4 @@
+cat > docs/04_optimization_report.md <<'EOF'
 # Database Optimization Report
 
 ## 1. Overview
@@ -7,51 +8,55 @@
 - Original workload: `queries/workload_30.sql`
 - Optimized workload: `sql/06_optimized_queries.sql`
 - Index definitions: `sql/05_indexes.sql`
-- Benchmark repetitions: 3 runs per query
+- Benchmark repetitions: 5 runs per query
 
 ## 2. Overall Results
 
 | Metric | Before (ms) | After (ms) | Improvement |
 |---|---:|---:|---:|
-| Average read time | 24.084 | 7.316 | 69.6% |
-| Average write time | 4.745 | 6.542 | -37.9% |
+| Average read time | 24.084 | 5.575 | 76.8% |
+| Average write time | 4.745 | 3.141 | 33.8% |
 
-Read improvement is positive when execution time decreases. A negative write improvement indicates slower writes.
+The optimized workload achieved a 4.32x average read speedup.
+Both read and write workloads improved overall.
 
 ## 3. Individual Query Comparison
 
 | Query | Type | Before (ms) | After (ms) | Improvement | Speedup |
 |---|---|---:|---:|---:|---:|
-| R01 | READ | 9.430 | 0.294 | +96.9% | 32.07x |
-| R02 | READ | 8.599 | 0.293 | +96.6% | 29.35x |
-| R03 | READ | 6.314 | 0.517 | +91.8% | 12.21x |
-| R04 | READ | 14.369 | 0.262 | +98.2% | 54.84x |
-| R05 | READ | 30.143 | 3.130 | +89.6% | 9.63x |
-| R06 | READ | 4.199 | 2.248 | +46.5% | 1.87x |
-| R07 | READ | 6.029 | 4.006 | +33.6% | 1.50x |
-| R08 | READ | 0.236 | 0.344 | -45.8% | 0.69x |
-| R09 | READ | 3.457 | 0.288 | +91.7% | 12.00x |
-| R10 | READ | 5.487 | 0.326 | +94.1% | 16.83x |
-| R11 | READ | 10.993 | 0.310 | +97.2% | 35.46x |
-| R12 | READ | 10.356 | 0.572 | +94.5% | 18.10x |
-| R13 | READ | 27.701 | 37.090 | -33.9% | 0.75x |
-| R14 | READ | 8.462 | 3.759 | +55.6% | 2.25x |
-| R15 | READ | 8.642 | 9.715 | -12.4% | 0.89x |
-| R16 | READ | 2.040 | 1.916 | +6.1% | 1.06x |
-| R17 | READ | 38.191 | 30.701 | +19.6% | 1.24x |
-| R18 | READ | 8.017 | 3.282 | +59.1% | 2.44x |
-| R19 | READ | 226.472 | 3.181 | +98.6% | 71.20x |
-| R20 | READ | 6.885 | 1.394 | +79.8% | 4.94x |
-| R21 | READ | 83.054 | 31.506 | +62.1% | 2.64x |
-| R22 | READ | 29.538 | 7.901 | +73.3% | 3.74x |
-| R23 | READ | 7.176 | 0.122 | +98.3% | 58.82x |
-| R24 | READ | 10.775 | 12.428 | -15.3% | 0.87x |
-| R25 | READ | 35.525 | 27.312 | +23.1% | 1.30x |
-| W01 | WRITE | 0.490 | 0.794 | -62.0% | 0.62x |
-| W02 | WRITE | 3.451 | 0.464 | +86.6% | 7.44x |
-| W03 | WRITE | 4.107 | 1.140 | +72.2% | 3.60x |
-| W04 | WRITE | 6.299 | 9.633 | -52.9% | 0.65x |
-| W05 | WRITE | 9.380 | 20.681 | -120.5% | 0.45x |
+| R01 | READ | 9.430 | 0.107 | +98.9% | 88.13x |
+| R02 | READ | 8.599 | 0.096 | +98.9% | 89.57x |
+| R03 | READ | 6.314 | 0.120 | +98.1% | 52.62x |
+| R04 | READ | 14.369 | 0.154 | +98.9% | 93.31x |
+| R05 | READ | 30.143 | 0.693 | +97.7% | 43.50x |
+| R06 | READ | 4.199 | 2.599 | +38.1% | 1.62x |
+| R07 | READ | 6.029 | 2.996 | +50.3% | 2.01x |
+| R08 | READ | 0.236 | 0.221 | +6.4% | 1.07x |
+| R09 | READ | 3.457 | 0.252 | +92.7% | 13.72x |
+| R10 | READ | 5.487 | 0.153 | +97.2% | 35.86x |
+| R11 | READ | 10.993 | 0.222 | +98.0% | 49.52x |
+| R12 | READ | 10.356 | 0.453 | +95.6% | 22.86x |
+| R13 | READ | 27.701 | 19.287 | +30.4% | 1.44x |
+| R14 | READ | 8.462 | 3.247 | +61.6% | 2.61x |
+| R15 | READ | 8.642 | 16.056 | -85.8% | 0.54x |
+| R16 | READ | 2.040 | 3.257 | -59.7% | 0.63x |
+| R17 | READ | 38.191 | 13.638 | +64.3% | 2.80x |
+| R18 | READ | 8.017 | 5.253 | +34.5% | 1.53x |
+| R19 | READ | 226.472 | 5.740 | +97.5% | 39.46x |
+| R20 | READ | 6.885 | 3.861 | +43.9% | 1.78x |
+| R21 | READ | 83.054 | 0.849 | +99.0% | 97.83x |
+| R22 | READ | 29.538 | 14.919 | +49.5% | 1.98x |
+| R23 | READ | 7.176 | 0.092 | +98.7% | 78.00x |
+| R24 | READ | 10.775 | 19.303 | -79.1% | 0.56x |
+| R25 | READ | 35.525 | 25.818 | +27.3% | 1.38x |
+| W01 | WRITE | 0.490 | 0.594 | -21.2% | 0.82x |
+| W02 | WRITE | 3.451 | 0.257 | +92.6% | 13.43x |
+| W03 | WRITE | 4.107 | 1.012 | +75.4% | 4.06x |
+| W04 | WRITE | 6.299 | 7.029 | -11.6% | 0.90x |
+| W05 | WRITE | 9.380 | 6.813 | +27.4% | 1.38x |
+
+Positive improvement means execution time decreased.
+Negative improvement means execution time increased.
 
 ## 4. Indexing Strategy
 
@@ -68,34 +73,97 @@ The optimization uses indexes for frequently filtered, joined, and sorted column
 
 ## 5. SQL Query Rewrites
 
+### R13 — Members who have never viewed a profile
+
+Replaced `NOT IN` with `NOT EXISTS` to avoid incorrect NULL-related
+behavior. The original subquery contained NULL viewer IDs, which
+caused `NOT IN` to return no matching members.
+
+### R15 — Job and skill filtering
+
+Replaced year extraction from the timestamp with a half-open
+timestamp range. This makes the date condition more index-friendly.
+
+### R17 — Employee career movement
+
+Replaced the window-function approach with a LATERAL subquery
+that finds the next position for each TCS employee using the
+member and start-date index.
+
 ### R19 — Company application and open-job counts
 
-Replaced repeated correlated subqueries with grouped common table expressions and joins. This reduces repeated aggregation work.
-
-### R20 — Application date filtering
-
-Replaced a date cast in the WHERE condition with a half-open timestamp range from June 1 inclusive to July 1 exclusive. This allows the timestamp index to support filtering more effectively.
+Used grouped common table expressions and joins to calculate
+company-level counts. The June application filter uses a
+half-open date range from June 1 inclusive to July 1 exclusive.
 
 ### R21 — Highest-endorsed member per skill
 
-Replaced window ranking with PostgreSQL DISTINCT ON, preserving the endorsement ordering and member ID tie-breaker.
+Replaced `DISTINCT ON` with a LATERAL subquery that retrieves
+the top member for each skill using the skill and endorsement
+index.
+
+### R24 — Invitation date filtering
+
+Used a half-open date range to filter invitations within 2026,
+avoiding an open-ended date condition.
 
 ## 6. Execution Plan Observations
 
-The optimized plans show index scans, bitmap index scans, and index-only scans for many important lookup patterns. Some queries still use sequential scans. These are not necessarily inefficient: PostgreSQL may prefer them when reading a large portion of a table.
+The optimized plans use index scans, bitmap index scans, and
+index-only scans for many important lookup patterns.
 
-R13, R15, and R24 regressed compared with baseline and deserve further investigation. R17 and R25 also remain relatively expensive.
+Some queries continue to use sequential scans. These are not
+necessarily inefficient: PostgreSQL may prefer them when a
+large portion of a table must be read.
+
+R15, R16, and R24 take longer than their baseline versions and
+remain candidates for further investigation. R17 and R25 also
+remain relatively expensive, although both improved compared
+with baseline.
+
+R13 improved in measured execution time and also fixes a
+correctness issue in the original query.
 
 ## 7. Read and Write Trade-off
 
-The average read-query time decreased from 24.084 ms to 7.316 ms, a 69.6% reduction. 21 of 25 read queries improved.
+The average read-query execution time decreased from 24.084 ms
+in the baseline workload to 5.575 ms in the optimized workload,
+representing a 76.8% reduction and an average speedup of 4.32x.
 
-The average write-query time changed from 4.745 ms to 6.542 ms. 2 of 5 write queries improved.
+Out of 25 read queries, 22 improved. R15, R16, and R24
+showed higher execution times after optimization and remain
+candidates for further investigation.
 
-Additional indexes improve read access but introduce maintenance overhead during inserts and updates. This is an important trade-off in index-heavy database design.
+The average write-query execution time decreased from 4.745 ms
+to 3.141 ms, an improvement of approximately 33.8%.
+Three of the five write queries improved, while W01 and W04
+showed higher execution times.
+
+The total database size is approximately 171 MB, and the
+combined index storage is approximately 102 MB. Indexes
+therefore account for approximately 59.6% of the database size.
+
+Indexes improve lookup and filtering performance but require
+additional storage and maintenance during data modifications.
+The measured results show that both read and write workloads
+improved overall.
 
 ## 8. Conclusion
 
-The optimized workload achieved a 3.29x average read speedup. The strongest gains came from targeted indexing and the R19, R20, and R21 query rewrites. Write overhead and the remaining slower queries should be considered when evaluating the final design.
+The optimized workload achieved an average read speedup of
+approximately 4.32x, reducing average read execution time
+by 76.8%.
 
-All measurements are specific to this database, dataset, PostgreSQL configuration, and three-run benchmark.
+The strongest improvements came from targeted indexing and
+query rewrites, particularly R19, R21, and R17. R13 was also
+corrected to use NOT EXISTS, avoiding the NULL-related
+incorrect behavior of the original NOT IN query.
+
+Although R15, R16, and R24 remain slower than their baseline
+versions, the overall workload demonstrates substantial
+performance improvement.
+
+All measurements are specific to this database, dataset,
+PostgreSQL configuration, and five-run benchmark. Execution
+times may vary between runs.
+EOF
