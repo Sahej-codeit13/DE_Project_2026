@@ -1,0 +1,9 @@
+=== R08 Benchmark Plan (Phase 5 / Large Dataset) ===
+Status: BLOCKED
+Reason: large_data.zip is unavailable in the environment.
+Expected Query Type: READ
+
+Benchmark execution command once large_data is unzipped and loaded:
+  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
+
+Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
