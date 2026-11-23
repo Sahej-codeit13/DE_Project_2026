@@ -1,9 +1,60 @@
-=== R25 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R25 run 1 ===
+Limit  (cost=186501.78..186502.03 rows=100 width=16) (actual time=526.211..526.216 rows=100 loops=1)
+  Buffers: shared hit=411 read=15622 written=1364
+  ->  Sort  (cost=186501.78..188167.44 rows=666264 width=16) (actual time=526.210..526.212 rows=100 loops=1)
+        Sort Key: ((t.start_date - t.prev_end)) DESC, t.member_id
+        Sort Method: top-N heapsort  Memory: 28kB
+        Buffers: shared hit=411 read=15622 written=1364
+        ->  Subquery Scan on t  (cost=0.49..161037.65 rows=666264 width=16) (actual time=0.048..519.861 rows=132124 loops=1)
+              Filter: ((t.start_date - t.prev_end) > 182)
+              Rows Removed by Filter: 1866668
+              Buffers: shared hit=408 read=15622 written=1364
+              ->  WindowAgg  (cost=0.49..129390.11 rows=1998792 width=12) (actual time=0.039..471.917 rows=1998792 loops=1)
+                    Buffers: shared hit=408 read=15622 written=1364
+                    ->  Index Only Scan using idx_positions_member_start on positions  (cost=0.43..94411.25 rows=1998792 width=12) (actual time=0.034..174.956 rows=1998792 loops=1)
+                          Heap Fetches: 0
+                          Buffers: shared hit=408 read=15622 written=1364
+Planning:
+  Buffers: shared hit=154
+Planning Time: 0.288 ms
+Execution Time: 526.244 ms
+=== R25 run 2 ===
+Limit  (cost=186501.78..186502.03 rows=100 width=16) (actual time=483.988..483.994 rows=100 loops=1)
+  Buffers: shared hit=5350 read=10683 written=29
+  ->  Sort  (cost=186501.78..188167.44 rows=666264 width=16) (actual time=483.988..483.990 rows=100 loops=1)
+        Sort Key: ((t.start_date - t.prev_end)) DESC, t.member_id
+        Sort Method: top-N heapsort  Memory: 28kB
+        Buffers: shared hit=5350 read=10683 written=29
+        ->  Subquery Scan on t  (cost=0.49..161037.65 rows=666264 width=16) (actual time=0.035..477.664 rows=132124 loops=1)
+              Filter: ((t.start_date - t.prev_end) > 182)
+              Rows Removed by Filter: 1866668
+              Buffers: shared hit=5347 read=10683 written=29
+              ->  WindowAgg  (cost=0.49..129390.11 rows=1998792 width=12) (actual time=0.028..430.047 rows=1998792 loops=1)
+                    Buffers: shared hit=5347 read=10683 written=29
+                    ->  Index Only Scan using idx_positions_member_start on positions  (cost=0.43..94411.25 rows=1998792 width=12) (actual time=0.024..127.230 rows=1998792 loops=1)
+                          Heap Fetches: 0
+                          Buffers: shared hit=5347 read=10683 written=29
+Planning:
+  Buffers: shared hit=154
+Planning Time: 0.259 ms
+Execution Time: 484.022 ms
+=== R25 run 3 ===
+Limit  (cost=186501.78..186502.03 rows=100 width=16) (actual time=513.572..513.578 rows=100 loops=1)
+  Buffers: shared hit=8053 read=7980
+  ->  Sort  (cost=186501.78..188167.44 rows=666264 width=16) (actual time=513.571..513.573 rows=100 loops=1)
+        Sort Key: ((t.start_date - t.prev_end)) DESC, t.member_id
+        Sort Method: top-N heapsort  Memory: 28kB
+        Buffers: shared hit=8053 read=7980
+        ->  Subquery Scan on t  (cost=0.49..161037.65 rows=666264 width=16) (actual time=0.037..506.146 rows=132124 loops=1)
+              Filter: ((t.start_date - t.prev_end) > 182)
+              Rows Removed by Filter: 1866668
+              Buffers: shared hit=8050 read=7980
+              ->  WindowAgg  (cost=0.49..129390.11 rows=1998792 width=12) (actual time=0.030..457.992 rows=1998792 loops=1)
+                    Buffers: shared hit=8050 read=7980
+                    ->  Index Only Scan using idx_positions_member_start on positions  (cost=0.43..94411.25 rows=1998792 width=12) (actual time=0.026..119.921 rows=1998792 loops=1)
+                          Heap Fetches: 0
+                          Buffers: shared hit=8050 read=7980
+Planning:
+  Buffers: shared hit=150 read=4
+Planning Time: 0.260 ms
+Execution Time: 513.605 ms

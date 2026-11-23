@@ -1,9 +1,201 @@
-=== R19 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R19 run 1 ===
+Sort  (cost=29276.49..29340.31 rows=25528 width=536) (actual time=53.595..53.665 rows=4000 loops=1)
+  Sort Key: (COALESCE((count(*)), '0'::bigint)) DESC
+  Sort Method: quicksort  Memory: 341kB
+  Buffers: shared hit=39774 read=1023 written=66
+  CTE it_companies
+    ->  Bitmap Heap Scan on companies  (cost=134.99..736.30 rows=3945 width=25) (actual time=1.368..2.104 rows=4000 loops=1)
+          Recheck Cond: ((industry)::text = 'IT Services'::text)
+          Heap Blocks: exact=529
+          Buffers: shared hit=529 read=31
+          ->  Bitmap Index Scan on idx_companies_industry  (cost=0.00..134.00 rows=3945 width=0) (actual time=1.333..1.333 rows=4000 loops=1)
+                Index Cond: ((industry)::text = 'IT Services'::text)
+                Buffers: shared read=31
+  ->  Hash Left Join  (cost=19775.76..20560.57 rows=25528 width=536) (actual time=52.673..53.329 rows=4000 loops=1)
+        Hash Cond: (c.company_id = oj.company_id)
+        Buffers: shared hit=39771 read=1023 written=66
+        ->  Hash Right Join  (cost=17797.03..18525.15 rows=21574 width=528) (actual time=45.379..45.797 rows=4000 loops=1)
+              Hash Cond: (j.company_id = c.company_id)
+              Buffers: shared hit=5024 read=1023 written=66
+              ->  HashAggregate  (cost=17668.81..17884.55 rows=21574 width=12) (actual time=42.760..42.916 rows=2259 loops=1)
+                    Group Key: j.company_id
+                    Batches: 1  Memory Usage: 1041kB
+                    Buffers: shared hit=4495 read=992 written=66
+                    ->  Hash Join  (cost=9618.86..17560.94 rows=21574 width=4) (actual time=24.581..41.694 rows=16227 loops=1)
+                          Hash Cond: (a.job_id = j.job_id)
+                          Buffers: shared hit=4495 read=992 written=66
+                          ->  Index Only Scan using idx_applications_recent on applications a  (cost=0.43..7122.77 rows=161067 width=4) (actual time=0.009..11.049 rows=164835 loops=1)
+                                Index Cond: ((applied_at >= '2026-06-01'::date) AND (applied_at < '2026-07-01'::date))
+                                Heap Fetches: 0
+                                Buffers: shared hit=7 read=992 written=66
+                          ->  Hash  (cost=9118.82..9118.82 rows=39969 width=8) (actual time=24.535..24.535 rows=29355 loops=1)
+                                Buckets: 65536  Batches: 1  Memory Usage: 1659kB
+                                Buffers: shared hit=4488
+                                ->  Hash Join  (cost=128.21..9118.82 rows=39969 width=8) (actual time=0.334..23.097 rows=29355 loops=1)
+                                      Hash Cond: (j.company_id = c_1.company_id)
+                                      Buffers: shared hit=4488
+                                      ->  Seq Scan on jobs j  (cost=0.00..7471.94 rows=298394 width=8) (actual time=0.004..8.881 rows=300000 loops=1)
+                                            Buffers: shared hit=4488
+                                      ->  Hash  (cost=78.90..78.90 rows=3945 width=4) (actual time=0.319..0.319 rows=4000 loops=1)
+                                            Buckets: 4096  Batches: 1  Memory Usage: 173kB
+                                            ->  CTE Scan on it_companies c_1  (cost=0.00..78.90 rows=3945 width=4) (actual time=0.000..0.162 rows=4000 loops=1)
+              ->  Hash  (cost=78.90..78.90 rows=3945 width=520) (actual time=2.615..2.615 rows=4000 loops=1)
+                    Buckets: 4096  Batches: 1  Memory Usage: 259kB
+                    Buffers: shared hit=529 read=31
+                    ->  CTE Scan on it_companies c  (cost=0.00..78.90 rows=3945 width=520) (actual time=1.369..2.473 rows=4000 loops=1)
+                          Buffers: shared hit=529 read=31
+        ->  Hash  (cost=1920.38..1920.38 rows=4668 width=12) (actual time=7.283..7.283 rows=2106 loops=1)
+              Buckets: 8192  Batches: 1  Memory Usage: 155kB
+              Buffers: shared hit=34747
+              ->  Subquery Scan on oj  (cost=1827.02..1920.38 rows=4668 width=12) (actual time=7.035..7.190 rows=2106 loops=1)
+                    Buffers: shared hit=34747
+                    ->  HashAggregate  (cost=1827.02..1873.70 rows=4668 width=12) (actual time=7.034..7.118 rows=2106 loops=1)
+                          Group Key: j_1.company_id
+                          Batches: 1  Memory Usage: 465kB
+                          Buffers: shared hit=34747
+                          ->  Hash Join  (cost=128.50..1803.68 rows=4668 width=4) (actual time=0.288..6.777 rows=3549 loops=1)
+                                Hash Cond: (j_1.company_id = c_2.company_id)
+                                Buffers: shared hit=34747
+                                ->  Index Scan using idx_jobs_open_closes on jobs j_1  (cost=0.29..1498.09 rows=34852 width=4) (actual time=0.008..4.954 rows=35473 loops=1)
+                                      Buffers: shared hit=34747
+                                ->  Hash  (cost=78.90..78.90 rows=3945 width=4) (actual time=0.269..0.269 rows=4000 loops=1)
+                                      Buckets: 4096  Batches: 1  Memory Usage: 173kB
+                                      ->  CTE Scan on it_companies c_2  (cost=0.00..78.90 rows=3945 width=4) (actual time=0.001..0.131 rows=4000 loops=1)
+Planning:
+  Buffers: shared hit=373 read=3
+Planning Time: 0.944 ms
+Execution Time: 53.844 ms
+=== R19 run 2 ===
+Sort  (cost=29276.49..29340.31 rows=25528 width=536) (actual time=48.045..48.120 rows=4000 loops=1)
+  Sort Key: (COALESCE((count(*)), '0'::bigint)) DESC
+  Sort Method: quicksort  Memory: 341kB
+  Buffers: shared hit=40749 read=48 written=32
+  CTE it_companies
+    ->  Bitmap Heap Scan on companies  (cost=134.99..736.30 rows=3945 width=25) (actual time=0.145..0.842 rows=4000 loops=1)
+          Recheck Cond: ((industry)::text = 'IT Services'::text)
+          Heap Blocks: exact=529
+          Buffers: shared hit=560
+          ->  Bitmap Index Scan on idx_companies_industry  (cost=0.00..134.00 rows=3945 width=0) (actual time=0.114..0.114 rows=4000 loops=1)
+                Index Cond: ((industry)::text = 'IT Services'::text)
+                Buffers: shared hit=31
+  ->  Hash Left Join  (cost=19775.76..20560.57 rows=25528 width=536) (actual time=47.103..47.795 rows=4000 loops=1)
+        Hash Cond: (c.company_id = oj.company_id)
+        Buffers: shared hit=40746 read=48 written=32
+        ->  Hash Right Join  (cost=17797.03..18525.15 rows=21574 width=528) (actual time=39.321..39.763 rows=4000 loops=1)
+              Hash Cond: (j.company_id = c.company_id)
+              Buffers: shared hit=5999 read=48 written=32
+              ->  HashAggregate  (cost=17668.81..17884.55 rows=21574 width=12) (actual time=38.023..38.186 rows=2259 loops=1)
+                    Group Key: j.company_id
+                    Batches: 1  Memory Usage: 1041kB
+                    Buffers: shared hit=5439 read=48 written=32
+                    ->  Hash Join  (cost=9618.86..17560.94 rows=21574 width=4) (actual time=23.883..36.899 rows=16227 loops=1)
+                          Hash Cond: (a.job_id = j.job_id)
+                          Buffers: shared hit=5439 read=48 written=32
+                          ->  Index Only Scan using idx_applications_recent on applications a  (cost=0.43..7122.77 rows=161067 width=4) (actual time=0.008..6.681 rows=164835 loops=1)
+                                Index Cond: ((applied_at >= '2026-06-01'::date) AND (applied_at < '2026-07-01'::date))
+                                Heap Fetches: 0
+                                Buffers: shared hit=999
+                          ->  Hash  (cost=9118.82..9118.82 rows=39969 width=8) (actual time=23.843..23.844 rows=29355 loops=1)
+                                Buckets: 65536  Batches: 1  Memory Usage: 1659kB
+                                Buffers: shared hit=4440 read=48 written=32
+                                ->  Hash Join  (cost=128.21..9118.82 rows=39969 width=8) (actual time=0.298..22.484 rows=29355 loops=1)
+                                      Hash Cond: (j.company_id = c_1.company_id)
+                                      Buffers: shared hit=4440 read=48 written=32
+                                      ->  Seq Scan on jobs j  (cost=0.00..7471.94 rows=298394 width=8) (actual time=0.003..8.604 rows=300000 loops=1)
+                                            Buffers: shared hit=4440 read=48 written=32
+                                      ->  Hash  (cost=78.90..78.90 rows=3945 width=4) (actual time=0.289..0.289 rows=4000 loops=1)
+                                            Buckets: 4096  Batches: 1  Memory Usage: 173kB
+                                            ->  CTE Scan on it_companies c_1  (cost=0.00..78.90 rows=3945 width=4) (actual time=0.000..0.141 rows=4000 loops=1)
+              ->  Hash  (cost=78.90..78.90 rows=3945 width=520) (actual time=1.292..1.292 rows=4000 loops=1)
+                    Buckets: 4096  Batches: 1  Memory Usage: 259kB
+                    Buffers: shared hit=560
+                    ->  CTE Scan on it_companies c  (cost=0.00..78.90 rows=3945 width=520) (actual time=0.146..1.160 rows=4000 loops=1)
+                          Buffers: shared hit=560
+        ->  Hash  (cost=1920.38..1920.38 rows=4668 width=12) (actual time=7.774..7.774 rows=2106 loops=1)
+              Buckets: 8192  Batches: 1  Memory Usage: 155kB
+              Buffers: shared hit=34747
+              ->  Subquery Scan on oj  (cost=1827.02..1920.38 rows=4668 width=12) (actual time=7.521..7.679 rows=2106 loops=1)
+                    Buffers: shared hit=34747
+                    ->  HashAggregate  (cost=1827.02..1873.70 rows=4668 width=12) (actual time=7.520..7.605 rows=2106 loops=1)
+                          Group Key: j_1.company_id
+                          Batches: 1  Memory Usage: 465kB
+                          Buffers: shared hit=34747
+                          ->  Hash Join  (cost=128.50..1803.68 rows=4668 width=4) (actual time=0.288..7.253 rows=3549 loops=1)
+                                Hash Cond: (j_1.company_id = c_2.company_id)
+                                Buffers: shared hit=34747
+                                ->  Index Scan using idx_jobs_open_closes on jobs j_1  (cost=0.29..1498.09 rows=34852 width=4) (actual time=0.006..5.342 rows=35473 loops=1)
+                                      Buffers: shared hit=34747
+                                ->  Hash  (cost=78.90..78.90 rows=3945 width=4) (actual time=0.272..0.272 rows=4000 loops=1)
+                                      Buckets: 4096  Batches: 1  Memory Usage: 173kB
+                                      ->  CTE Scan on it_companies c_2  (cost=0.00..78.90 rows=3945 width=4) (actual time=0.001..0.135 rows=4000 loops=1)
+Planning:
+  Buffers: shared hit=376
+Planning Time: 0.652 ms
+Execution Time: 48.312 ms
+=== R19 run 3 ===
+Sort  (cost=29276.49..29340.31 rows=25528 width=536) (actual time=46.194..46.267 rows=4000 loops=1)
+  Sort Key: (COALESCE((count(*)), '0'::bigint)) DESC
+  Sort Method: quicksort  Memory: 341kB
+  Buffers: shared hit=40781 read=16
+  CTE it_companies
+    ->  Bitmap Heap Scan on companies  (cost=134.99..736.30 rows=3945 width=25) (actual time=0.147..0.836 rows=4000 loops=1)
+          Recheck Cond: ((industry)::text = 'IT Services'::text)
+          Heap Blocks: exact=529
+          Buffers: shared hit=560
+          ->  Bitmap Index Scan on idx_companies_industry  (cost=0.00..134.00 rows=3945 width=0) (actual time=0.115..0.116 rows=4000 loops=1)
+                Index Cond: ((industry)::text = 'IT Services'::text)
+                Buffers: shared hit=31
+  ->  Hash Left Join  (cost=19775.76..20560.57 rows=25528 width=536) (actual time=45.271..45.925 rows=4000 loops=1)
+        Hash Cond: (c.company_id = oj.company_id)
+        Buffers: shared hit=40778 read=16
+        ->  Hash Right Join  (cost=17797.03..18525.15 rows=21574 width=528) (actual time=37.794..38.211 rows=4000 loops=1)
+              Hash Cond: (j.company_id = c.company_id)
+              Buffers: shared hit=6031 read=16
+              ->  HashAggregate  (cost=17668.81..17884.55 rows=21574 width=12) (actual time=36.496..36.647 rows=2259 loops=1)
+                    Group Key: j.company_id
+                    Batches: 1  Memory Usage: 1041kB
+                    Buffers: shared hit=5471 read=16
+                    ->  Hash Join  (cost=9618.86..17560.94 rows=21574 width=4) (actual time=22.955..35.493 rows=16227 loops=1)
+                          Hash Cond: (a.job_id = j.job_id)
+                          Buffers: shared hit=5471 read=16
+                          ->  Index Only Scan using idx_applications_recent on applications a  (cost=0.43..7122.77 rows=161067 width=4) (actual time=0.012..6.575 rows=164835 loops=1)
+                                Index Cond: ((applied_at >= '2026-06-01'::date) AND (applied_at < '2026-07-01'::date))
+                                Heap Fetches: 0
+                                Buffers: shared hit=999
+                          ->  Hash  (cost=9118.82..9118.82 rows=39969 width=8) (actual time=22.913..22.913 rows=29355 loops=1)
+                                Buckets: 65536  Batches: 1  Memory Usage: 1659kB
+                                Buffers: shared hit=4472 read=16
+                                ->  Hash Join  (cost=128.21..9118.82 rows=39969 width=8) (actual time=0.285..21.559 rows=29355 loops=1)
+                                      Hash Cond: (j.company_id = c_1.company_id)
+                                      Buffers: shared hit=4472 read=16
+                                      ->  Seq Scan on jobs j  (cost=0.00..7471.94 rows=298394 width=8) (actual time=0.003..8.320 rows=300000 loops=1)
+                                            Buffers: shared hit=4472 read=16
+                                      ->  Hash  (cost=78.90..78.90 rows=3945 width=4) (actual time=0.277..0.277 rows=4000 loops=1)
+                                            Buckets: 4096  Batches: 1  Memory Usage: 173kB
+                                            ->  CTE Scan on it_companies c_1  (cost=0.00..78.90 rows=3945 width=4) (actual time=0.000..0.137 rows=4000 loops=1)
+              ->  Hash  (cost=78.90..78.90 rows=3945 width=520) (actual time=1.294..1.294 rows=4000 loops=1)
+                    Buckets: 4096  Batches: 1  Memory Usage: 259kB
+                    Buffers: shared hit=560
+                    ->  CTE Scan on it_companies c  (cost=0.00..78.90 rows=3945 width=520) (actual time=0.148..1.166 rows=4000 loops=1)
+                          Buffers: shared hit=560
+        ->  Hash  (cost=1920.38..1920.38 rows=4668 width=12) (actual time=7.466..7.466 rows=2106 loops=1)
+              Buckets: 8192  Batches: 1  Memory Usage: 155kB
+              Buffers: shared hit=34747
+              ->  Subquery Scan on oj  (cost=1827.02..1920.38 rows=4668 width=12) (actual time=7.208..7.370 rows=2106 loops=1)
+                    Buffers: shared hit=34747
+                    ->  HashAggregate  (cost=1827.02..1873.70 rows=4668 width=12) (actual time=7.207..7.296 rows=2106 loops=1)
+                          Group Key: j_1.company_id
+                          Batches: 1  Memory Usage: 465kB
+                          Buffers: shared hit=34747
+                          ->  Hash Join  (cost=128.50..1803.68 rows=4668 width=4) (actual time=0.286..6.951 rows=3549 loops=1)
+                                Hash Cond: (j_1.company_id = c_2.company_id)
+                                Buffers: shared hit=34747
+                                ->  Index Scan using idx_jobs_open_closes on jobs j_1  (cost=0.29..1498.09 rows=34852 width=4) (actual time=0.007..5.124 rows=35473 loops=1)
+                                      Buffers: shared hit=34747
+                                ->  Hash  (cost=78.90..78.90 rows=3945 width=4) (actual time=0.269..0.269 rows=4000 loops=1)
+                                      Buckets: 4096  Batches: 1  Memory Usage: 173kB
+                                      ->  CTE Scan on it_companies c_2  (cost=0.00..78.90 rows=3945 width=4) (actual time=0.000..0.129 rows=4000 loops=1)
+Planning:
+  Buffers: shared hit=376
+Planning Time: 0.638 ms
+Execution Time: 46.459 ms

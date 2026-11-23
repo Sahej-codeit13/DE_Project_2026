@@ -1,9 +1,30 @@
-=== R22 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R22 run 1 ===
+Limit  (cost=3920.04..3921.02 rows=25 width=28) (actual time=9.316..9.318 rows=25 loops=1)
+  Buffers: shared hit=606
+  ->  Index Only Scan using idx_applications_recent on applications  (cost=0.43..117588.19 rows=2999984 width=28) (actual time=0.033..6.643 rows=100025 loops=1)
+        Heap Fetches: 0
+        Buffers: shared hit=606
+Planning:
+  Buffers: shared hit=191
+Planning Time: 0.276 ms
+Execution Time: 9.328 ms
+=== R22 run 2 ===
+Limit  (cost=3920.04..3921.02 rows=25 width=28) (actual time=8.671..8.673 rows=25 loops=1)
+  Buffers: shared hit=606
+  ->  Index Only Scan using idx_applications_recent on applications  (cost=0.43..117588.19 rows=2999984 width=28) (actual time=0.024..6.220 rows=100025 loops=1)
+        Heap Fetches: 0
+        Buffers: shared hit=606
+Planning:
+  Buffers: shared hit=191
+Planning Time: 0.297 ms
+Execution Time: 8.684 ms
+=== R22 run 3 ===
+Limit  (cost=3920.04..3921.02 rows=25 width=28) (actual time=8.876..8.879 rows=25 loops=1)
+  Buffers: shared hit=606
+  ->  Index Only Scan using idx_applications_recent on applications  (cost=0.43..117588.19 rows=2999984 width=28) (actual time=0.030..6.288 rows=100025 loops=1)
+        Heap Fetches: 0
+        Buffers: shared hit=606
+Planning:
+  Buffers: shared hit=191
+Planning Time: 0.290 ms
+Execution Time: 8.891 ms

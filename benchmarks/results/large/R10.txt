@@ -1,9 +1,54 @@
-=== R10 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R10 run 1 ===
+Sort  (cost=16.90..16.91 rows=1 width=84) (actual time=0.481..0.481 rows=1 loops=1)
+  Sort Key: i.sent_at DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=6 read=6
+  ->  Nested Loop  (cost=0.85..16.89 rows=1 width=84) (actual time=0.475..0.475 rows=1 loops=1)
+        Buffers: shared hit=3 read=6
+        ->  Index Only Scan using idx_invitations_recipient_status on invitations i  (cost=0.43..8.45 rows=1 width=72) (actual time=0.354..0.355 rows=1 loops=1)
+              Index Cond: ((recipient_id = 1023) AND (status = 'PENDING'::text))
+              Heap Fetches: 1
+              Buffers: shared hit=1 read=4
+        ->  Index Scan using members_pkey on members m  (cost=0.42..8.44 rows=1 width=16) (actual time=0.119..0.119 rows=1 loops=1)
+              Index Cond: (member_id = i.sender_id)
+              Buffers: shared hit=2 read=2
+Planning:
+  Buffers: shared hit=298 read=13
+Planning Time: 1.654 ms
+Execution Time: 0.501 ms
+=== R10 run 2 ===
+Sort  (cost=16.90..16.91 rows=1 width=84) (actual time=0.023..0.023 rows=1 loops=1)
+  Sort Key: i.sent_at DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=12
+  ->  Nested Loop  (cost=0.85..16.89 rows=1 width=84) (actual time=0.016..0.017 rows=1 loops=1)
+        Buffers: shared hit=9
+        ->  Index Only Scan using idx_invitations_recipient_status on invitations i  (cost=0.43..8.45 rows=1 width=72) (actual time=0.010..0.011 rows=1 loops=1)
+              Index Cond: ((recipient_id = 1023) AND (status = 'PENDING'::text))
+              Heap Fetches: 1
+              Buffers: shared hit=5
+        ->  Index Scan using members_pkey on members m  (cost=0.42..8.44 rows=1 width=16) (actual time=0.005..0.005 rows=1 loops=1)
+              Index Cond: (member_id = i.sender_id)
+              Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=311
+Planning Time: 0.476 ms
+Execution Time: 0.047 ms
+=== R10 run 3 ===
+Sort  (cost=16.90..16.91 rows=1 width=84) (actual time=0.018..0.018 rows=1 loops=1)
+  Sort Key: i.sent_at DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=12
+  ->  Nested Loop  (cost=0.85..16.89 rows=1 width=84) (actual time=0.012..0.013 rows=1 loops=1)
+        Buffers: shared hit=9
+        ->  Index Only Scan using idx_invitations_recipient_status on invitations i  (cost=0.43..8.45 rows=1 width=72) (actual time=0.007..0.007 rows=1 loops=1)
+              Index Cond: ((recipient_id = 1023) AND (status = 'PENDING'::text))
+              Heap Fetches: 1
+              Buffers: shared hit=5
+        ->  Index Scan using members_pkey on members m  (cost=0.42..8.44 rows=1 width=16) (actual time=0.004..0.004 rows=1 loops=1)
+              Index Cond: (member_id = i.sender_id)
+              Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=311
+Planning Time: 0.406 ms
+Execution Time: 0.035 ms

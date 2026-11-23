@@ -1,9 +1,75 @@
-=== W03 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: WRITE
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== W03 run 1 ===
+Insert on connections  (cost=8.88..16.91 rows=0 width=0) (actual time=1.739..1.741 rows=0 loops=1)
+  Conflict Resolution: NOTHING
+  Tuples Inserted: 1
+  Conflicting Tuples: 0
+  Buffers: shared hit=66 read=17 dirtied=5
+  InitPlan 2
+    ->  Result  (cost=8.45..8.46 rows=1 width=4) (actual time=0.126..0.128 rows=1 loops=1)
+          Buffers: shared hit=5
+          InitPlan 1
+            ->  Limit  (cost=0.43..8.45 rows=1 width=4) (actual time=0.123..0.124 rows=1 loops=1)
+                  Buffers: shared hit=5
+                  ->  Index Only Scan using idx_invitations_recipient_status on invitations invitations_1  (cost=0.43..8.45 rows=1 width=4) (actual time=0.122..0.122 rows=1 loops=1)
+                        Index Cond: ((recipient_id = 1023) AND (status = 'PENDING'::text))
+                        Heap Fetches: 1
+                        Buffers: shared hit=5
+  ->  Index Scan using invitations_pkey on invitations  (cost=0.43..8.45 rows=1 width=16) (actual time=0.151..0.164 rows=1 loops=1)
+        Index Cond: (invitation_id = (InitPlan 2).col1)
+        Buffers: shared hit=11
+Planning:
+  Buffers: shared hit=147 read=1
+Planning Time: 1.186 ms
+Trigger for constraint connections_member_a_fkey: time=0.838 calls=1
+Trigger for constraint connections_member_b_fkey: time=0.135 calls=1
+Execution Time: 2.875 ms
+=== W03 run 2 ===
+Insert on connections  (cost=8.88..16.91 rows=0 width=0) (actual time=0.479..0.481 rows=0 loops=1)
+  Conflict Resolution: NOTHING
+  Tuples Inserted: 1
+  Conflicting Tuples: 0
+  Buffers: shared hit=80 read=1 dirtied=1
+  InitPlan 2
+    ->  Result  (cost=8.45..8.46 rows=1 width=4) (actual time=0.113..0.114 rows=1 loops=1)
+          Buffers: shared hit=5
+          InitPlan 1
+            ->  Limit  (cost=0.43..8.45 rows=1 width=4) (actual time=0.110..0.110 rows=1 loops=1)
+                  Buffers: shared hit=5
+                  ->  Index Only Scan using idx_invitations_recipient_status on invitations invitations_1  (cost=0.43..8.45 rows=1 width=4) (actual time=0.108..0.108 rows=1 loops=1)
+                        Index Cond: ((recipient_id = 1023) AND (status = 'PENDING'::text))
+                        Heap Fetches: 1
+                        Buffers: shared hit=5
+  ->  Index Scan using invitations_pkey on invitations  (cost=0.43..8.45 rows=1 width=16) (actual time=0.136..0.138 rows=1 loops=1)
+        Index Cond: (invitation_id = (InitPlan 2).col1)
+        Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=148
+Planning Time: 0.962 ms
+Trigger for constraint connections_member_a_fkey: time=0.526 calls=1
+Trigger for constraint connections_member_b_fkey: time=0.077 calls=1
+Execution Time: 1.247 ms
+=== W03 run 3 ===
+Insert on connections  (cost=8.88..16.91 rows=0 width=0) (actual time=0.304..0.306 rows=0 loops=1)
+  Conflict Resolution: NOTHING
+  Tuples Inserted: 1
+  Conflicting Tuples: 0
+  Buffers: shared hit=80 read=1 dirtied=1
+  InitPlan 2
+    ->  Result  (cost=8.45..8.46 rows=1 width=4) (actual time=0.074..0.075 rows=1 loops=1)
+          Buffers: shared hit=5
+          InitPlan 1
+            ->  Limit  (cost=0.43..8.45 rows=1 width=4) (actual time=0.072..0.072 rows=1 loops=1)
+                  Buffers: shared hit=5
+                  ->  Index Only Scan using idx_invitations_recipient_status on invitations invitations_1  (cost=0.43..8.45 rows=1 width=4) (actual time=0.070..0.071 rows=1 loops=1)
+                        Index Cond: ((recipient_id = 1023) AND (status = 'PENDING'::text))
+                        Heap Fetches: 1
+                        Buffers: shared hit=5
+  ->  Index Scan using invitations_pkey on invitations  (cost=0.43..8.45 rows=1 width=16) (actual time=0.088..0.089 rows=1 loops=1)
+        Index Cond: (invitation_id = (InitPlan 2).col1)
+        Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=148
+Planning Time: 1.068 ms
+Trigger for constraint connections_member_a_fkey: time=0.432 calls=1
+Trigger for constraint connections_member_b_fkey: time=0.061 calls=1
+Execution Time: 0.959 ms

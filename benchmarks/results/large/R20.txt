@@ -1,9 +1,54 @@
-=== R20 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R20 run 1 ===
+WindowAgg  (cost=23688.74..29297.91 rows=161067 width=44) (actual time=18.864..24.743 rows=30 loops=1)
+  Buffers: shared hit=1002
+  ->  GroupAggregate  (cost=23660.56..26881.90 rows=161067 width=12) (actual time=18.654..24.729 rows=30 loops=1)
+        Group Key: ((applications.applied_at)::date)
+        Buffers: shared hit=1002
+        ->  Sort  (cost=23660.56..24063.23 rows=161067 width=4) (actual time=18.448..21.216 rows=164835 loops=1)
+              Sort Key: ((applications.applied_at)::date)
+              Sort Method: quicksort  Memory: 4096kB
+              Buffers: shared hit=1002
+              ->  Index Only Scan using idx_applications_recent on applications  (cost=0.43..7525.44 rows=161067 width=4) (actual time=0.012..14.039 rows=164835 loops=1)
+                    Index Cond: ((applied_at >= '2026-06-01'::date) AND (applied_at < '2026-07-01'::date))
+                    Heap Fetches: 0
+                    Buffers: shared hit=999
+Planning:
+  Buffers: shared hit=218
+Planning Time: 0.356 ms
+Execution Time: 24.785 ms
+=== R20 run 2 ===
+WindowAgg  (cost=23688.74..29297.91 rows=161067 width=44) (actual time=17.084..23.080 rows=30 loops=1)
+  Buffers: shared hit=1002
+  ->  GroupAggregate  (cost=23660.56..26881.90 rows=161067 width=12) (actual time=16.858..23.066 rows=30 loops=1)
+        Group Key: ((applications.applied_at)::date)
+        Buffers: shared hit=1002
+        ->  Sort  (cost=23660.56..24063.23 rows=161067 width=4) (actual time=16.653..19.471 rows=164835 loops=1)
+              Sort Key: ((applications.applied_at)::date)
+              Sort Method: quicksort  Memory: 4096kB
+              Buffers: shared hit=1002
+              ->  Index Only Scan using idx_applications_recent on applications  (cost=0.43..7525.44 rows=161067 width=4) (actual time=0.010..12.542 rows=164835 loops=1)
+                    Index Cond: ((applied_at >= '2026-06-01'::date) AND (applied_at < '2026-07-01'::date))
+                    Heap Fetches: 0
+                    Buffers: shared hit=999
+Planning:
+  Buffers: shared hit=218
+Planning Time: 0.308 ms
+Execution Time: 23.111 ms
+=== R20 run 3 ===
+WindowAgg  (cost=23688.74..29297.91 rows=161067 width=44) (actual time=17.115..23.156 rows=30 loops=1)
+  Buffers: shared hit=1002
+  ->  GroupAggregate  (cost=23660.56..26881.90 rows=161067 width=12) (actual time=16.887..23.142 rows=30 loops=1)
+        Group Key: ((applications.applied_at)::date)
+        Buffers: shared hit=1002
+        ->  Sort  (cost=23660.56..24063.23 rows=161067 width=4) (actual time=16.677..19.522 rows=164835 loops=1)
+              Sort Key: ((applications.applied_at)::date)
+              Sort Method: quicksort  Memory: 4096kB
+              Buffers: shared hit=1002
+              ->  Index Only Scan using idx_applications_recent on applications  (cost=0.43..7525.44 rows=161067 width=4) (actual time=0.010..12.689 rows=164835 loops=1)
+                    Index Cond: ((applied_at >= '2026-06-01'::date) AND (applied_at < '2026-07-01'::date))
+                    Heap Fetches: 0
+                    Buffers: shared hit=999
+Planning:
+  Buffers: shared hit=218
+Planning Time: 0.367 ms
+Execution Time: 23.188 ms

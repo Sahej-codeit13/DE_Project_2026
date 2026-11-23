@@ -1,9 +1,57 @@
-=== R21 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R21 run 1 ===
+Sort  (cost=38.36..38.54 rows=72 width=17) (actual time=17.456..17.458 rows=72 loops=1)
+  Sort Key: ms.endorsements DESC
+  Sort Method: quicksort  Memory: 27kB
+  Buffers: shared hit=80 read=141
+  ->  Nested Loop  (cost=0.43..36.13 rows=72 width=17) (actual time=0.034..17.443 rows=72 loops=1)
+        Buffers: shared hit=77 read=141
+        ->  Seq Scan on skills s  (cost=0.00..1.72 rows=72 width=13) (actual time=0.003..0.006 rows=72 loops=1)
+              Buffers: shared hit=1
+        ->  Limit  (cost=0.43..0.47 rows=1 width=8) (actual time=0.242..0.242 rows=1 loops=72)
+              Buffers: shared hit=76 read=141
+              ->  Index Only Scan using idx_member_skills_skill_endorsements on member_skills ms  (cost=0.43..2092.30 rows=58965 width=8) (actual time=0.242..0.242 rows=1 loops=72)
+                    Index Cond: (skill_id = s.skill_id)
+                    Heap Fetches: 0
+                    Buffers: shared hit=76 read=141
+Planning:
+  Buffers: shared hit=146
+Planning Time: 0.293 ms
+Execution Time: 17.476 ms
+=== R21 run 2 ===
+Sort  (cost=38.36..38.54 rows=72 width=17) (actual time=0.386..0.388 rows=72 loops=1)
+  Sort Key: ms.endorsements DESC
+  Sort Method: quicksort  Memory: 27kB
+  Buffers: shared hit=221
+  ->  Nested Loop  (cost=0.43..36.13 rows=72 width=17) (actual time=0.032..0.377 rows=72 loops=1)
+        Buffers: shared hit=218
+        ->  Seq Scan on skills s  (cost=0.00..1.72 rows=72 width=13) (actual time=0.003..0.005 rows=72 loops=1)
+              Buffers: shared hit=1
+        ->  Limit  (cost=0.43..0.47 rows=1 width=8) (actual time=0.005..0.005 rows=1 loops=72)
+              Buffers: shared hit=217
+              ->  Index Only Scan using idx_member_skills_skill_endorsements on member_skills ms  (cost=0.43..2092.30 rows=58965 width=8) (actual time=0.005..0.005 rows=1 loops=72)
+                    Index Cond: (skill_id = s.skill_id)
+                    Heap Fetches: 0
+                    Buffers: shared hit=217
+Planning:
+  Buffers: shared hit=146
+Planning Time: 0.290 ms
+Execution Time: 0.407 ms
+=== R21 run 3 ===
+Sort  (cost=38.36..38.54 rows=72 width=17) (actual time=0.344..0.346 rows=72 loops=1)
+  Sort Key: ms.endorsements DESC
+  Sort Method: quicksort  Memory: 27kB
+  Buffers: shared hit=221
+  ->  Nested Loop  (cost=0.43..36.13 rows=72 width=17) (actual time=0.028..0.334 rows=72 loops=1)
+        Buffers: shared hit=218
+        ->  Seq Scan on skills s  (cost=0.00..1.72 rows=72 width=13) (actual time=0.003..0.005 rows=72 loops=1)
+              Buffers: shared hit=1
+        ->  Limit  (cost=0.43..0.47 rows=1 width=8) (actual time=0.004..0.004 rows=1 loops=72)
+              Buffers: shared hit=217
+              ->  Index Only Scan using idx_member_skills_skill_endorsements on member_skills ms  (cost=0.43..2092.30 rows=58965 width=8) (actual time=0.004..0.004 rows=1 loops=72)
+                    Index Cond: (skill_id = s.skill_id)
+                    Heap Fetches: 0
+                    Buffers: shared hit=217
+Planning:
+  Buffers: shared hit=146
+Planning Time: 0.267 ms
+Execution Time: 0.363 ms

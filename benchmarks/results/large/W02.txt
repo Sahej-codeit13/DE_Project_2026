@@ -1,9 +1,60 @@
-=== W02 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: WRITE
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== W02 run 1 ===
+Update on invitations  (cost=8.88..16.90 rows=0 width=0) (actual time=1.143..1.143 rows=0 loops=1)
+  Buffers: shared hit=22 read=15 dirtied=5
+  InitPlan 2
+    ->  Result  (cost=8.45..8.46 rows=1 width=4) (actual time=0.035..0.035 rows=1 loops=1)
+          Buffers: shared read=5
+          InitPlan 1
+            ->  Limit  (cost=0.43..8.45 rows=1 width=4) (actual time=0.034..0.034 rows=1 loops=1)
+                  Buffers: shared read=5
+                  ->  Index Only Scan using idx_invitations_recipient_status on invitations invitations_1  (cost=0.43..8.45 rows=1 width=4) (actual time=0.033..0.033 rows=1 loops=1)
+                        Index Cond: ((recipient_id = 1023) AND (status = 'PENDING'::text))
+                        Heap Fetches: 1
+                        Buffers: shared read=5
+  ->  Index Scan using invitations_pkey on invitations  (cost=0.43..8.45 rows=1 width=72) (actual time=0.379..0.379 rows=1 loops=1)
+        Index Cond: (invitation_id = (InitPlan 2).col1)
+        Buffers: shared hit=1 read=8
+Planning:
+  Buffers: shared hit=134 read=9
+Planning Time: 0.487 ms
+Execution Time: 1.487 ms
+=== W02 run 2 ===
+Update on invitations  (cost=8.88..16.90 rows=0 width=0) (actual time=0.209..0.209 rows=0 loops=1)
+  Buffers: shared hit=39 read=1 dirtied=1
+  InitPlan 2
+    ->  Result  (cost=8.45..8.46 rows=1 width=4) (actual time=0.049..0.049 rows=1 loops=1)
+          Buffers: shared hit=5
+          InitPlan 1
+            ->  Limit  (cost=0.43..8.45 rows=1 width=4) (actual time=0.047..0.047 rows=1 loops=1)
+                  Buffers: shared hit=5
+                  ->  Index Only Scan using idx_invitations_recipient_status on invitations invitations_1  (cost=0.43..8.45 rows=1 width=4) (actual time=0.047..0.047 rows=1 loops=1)
+                        Index Cond: ((recipient_id = 1023) AND (status = 'PENDING'::text))
+                        Heap Fetches: 1
+                        Buffers: shared hit=5
+  ->  Index Scan using invitations_pkey on invitations  (cost=0.43..8.45 rows=1 width=72) (actual time=0.062..0.064 rows=1 loops=1)
+        Index Cond: (invitation_id = (InitPlan 2).col1)
+        Buffers: shared hit=11
+Planning:
+  Buffers: shared hit=143
+Planning Time: 0.251 ms
+Execution Time: 0.250 ms
+=== W02 run 3 ===
+Update on invitations  (cost=8.88..16.90 rows=0 width=0) (actual time=0.200..0.200 rows=0 loops=1)
+  Buffers: shared hit=39 read=1 dirtied=1
+  InitPlan 2
+    ->  Result  (cost=8.45..8.46 rows=1 width=4) (actual time=0.025..0.025 rows=1 loops=1)
+          Buffers: shared hit=5
+          InitPlan 1
+            ->  Limit  (cost=0.43..8.45 rows=1 width=4) (actual time=0.024..0.024 rows=1 loops=1)
+                  Buffers: shared hit=5
+                  ->  Index Only Scan using idx_invitations_recipient_status on invitations invitations_1  (cost=0.43..8.45 rows=1 width=4) (actual time=0.024..0.024 rows=1 loops=1)
+                        Index Cond: ((recipient_id = 1023) AND (status = 'PENDING'::text))
+                        Heap Fetches: 1
+                        Buffers: shared hit=5
+  ->  Index Scan using invitations_pkey on invitations  (cost=0.43..8.45 rows=1 width=72) (actual time=0.038..0.040 rows=1 loops=1)
+        Index Cond: (invitation_id = (InitPlan 2).col1)
+        Buffers: shared hit=11
+Planning:
+  Buffers: shared hit=143
+Planning Time: 0.223 ms
+Execution Time: 0.238 ms

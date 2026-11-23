@@ -1,9 +1,33 @@
-=== W04 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: WRITE
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== W04 run 1 ===
+Update on jobs  (cost=0.29..1540.94 rows=0 width=0) (actual time=982.099..982.100 rows=0 loops=1)
+  Buffers: shared hit=130709 read=5464 dirtied=5540 written=113
+  ->  Index Scan using idx_jobs_open_closes on jobs  (cost=0.29..1540.94 rows=32025 width=64) (actual time=0.079..26.279 rows=10997 loops=1)
+        Index Cond: (closes_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone)
+        Filter: ((status)::text = 'OPEN'::text)
+        Buffers: shared hit=6760 read=4151
+Planning:
+  Buffers: shared hit=113 read=1
+Planning Time: 0.996 ms
+Execution Time: 982.265 ms
+=== W04 run 2 ===
+Update on jobs  (cost=0.29..1578.20 rows=0 width=0) (actual time=128.103..128.103 rows=0 loops=1)
+  Buffers: shared hit=143202 dirtied=167 written=167
+  ->  Index Scan using idx_jobs_open_closes on jobs  (cost=0.29..1578.20 rows=32824 width=64) (actual time=0.030..13.428 rows=10997 loops=1)
+        Index Cond: (closes_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone)
+        Filter: ((status)::text = 'OPEN'::text)
+        Buffers: shared hit=10911
+Planning:
+  Buffers: shared hit=114
+Planning Time: 0.623 ms
+Execution Time: 128.184 ms
+=== W04 run 3 ===
+Update on jobs  (cost=0.29..1637.16 rows=0 width=0) (actual time=105.895..105.895 rows=0 loops=1)
+  Buffers: shared hit=153708 dirtied=173 written=173
+  ->  Index Scan using idx_jobs_open_closes on jobs  (cost=0.29..1637.16 rows=33980 width=64) (actual time=0.012..7.214 rows=10997 loops=1)
+        Index Cond: (closes_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone)
+        Filter: ((status)::text = 'OPEN'::text)
+        Buffers: shared hit=10911
+Planning:
+  Buffers: shared hit=114
+Planning Time: 0.245 ms
+Execution Time: 105.931 ms

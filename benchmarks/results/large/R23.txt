@@ -1,9 +1,24 @@
-=== R23 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R23 run 1 ===
+Index Scan using idx_members_lower_email on members  (cost=0.42..8.44 rows=1 width=17) (actual time=0.448..0.448 rows=1 loops=1)
+  Index Cond: (lower((email)::text) = 'yash.sharma1023@gmail.com'::text)
+  Buffers: shared read=4
+Planning:
+  Buffers: shared hit=107
+Planning Time: 0.231 ms
+Execution Time: 0.462 ms
+=== R23 run 2 ===
+Index Scan using idx_members_lower_email on members  (cost=0.42..8.44 rows=1 width=17) (actual time=0.020..0.020 rows=1 loops=1)
+  Index Cond: (lower((email)::text) = 'yash.sharma1023@gmail.com'::text)
+  Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=107
+Planning Time: 0.210 ms
+Execution Time: 0.033 ms
+=== R23 run 3 ===
+Index Scan using idx_members_lower_email on members  (cost=0.42..8.44 rows=1 width=17) (actual time=0.019..0.020 rows=1 loops=1)
+  Index Cond: (lower((email)::text) = 'yash.sharma1023@gmail.com'::text)
+  Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=107
+Planning Time: 0.190 ms
+Execution Time: 0.032 ms

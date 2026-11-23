@@ -1,31 +1,31 @@
 query_id,type,avg_ms,median_ms,min_ms,max_ms,scan_nodes
-R01,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R02,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R03,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R04,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R05,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R06,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R07,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R08,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R09,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R10,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R11,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R12,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R13,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R14,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R15,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R16,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R17,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R18,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R19,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R20,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R21,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R22,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R23,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R24,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-R25,READ,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-W01,WRITE,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-W02,WRITE,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-W03,WRITE,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-W04,WRITE,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
-W05,WRITE,BLOCKED,BLOCKED,BLOCKED,BLOCKED,BLOCKED (large_data.zip unavailable)
+R01,READ,0.532,0.251,0.242,1.104,Index Scan using members_pkey on members | Index Only Scan using idx_positions_current_member on positions | Index Scan using companies_pkey on companies
+R02,READ,0.617,0.253,0.223,1.374,Index Only Scan using idx_positions_member_start on positions | Index Scan using companies_pkey on companies
+R03,READ,0.653,0.183,0.115,1.660,Bitmap Heap Scan on connections | Bitmap Index Scan on idx_connections_member_a_recent | Bitmap Index Scan on idx_connections_member_b_recent
+R04,READ,0.485,0.352,0.267,0.837,Bitmap Heap Scan on connections | Bitmap Index Scan on idx_connections_member_a_recent | Bitmap Index Scan on idx_connections_member_b_recent
+R05,READ,10.040,2.582,2.000,25.537,Bitmap Heap Scan on connections | Bitmap Index Scan on idx_connections_member_a_recent | Bitmap Index Scan on idx_connections_member_b_recent
+R06,READ,40.124,19.965,17.965,82.442,Index Scan using idx_jobs_open_closes on jobs | Index Scan using companies_pkey on companies
+R07,READ,23.870,21.822,20.226,29.563,Index Only Scan using member_skills_pkey on member_skills | Index Only Scan using idx_job_skills_skill_job on job_skills | Index Scan using idx_jobs_open_closes on jobs
+R08,READ,0.507,0.070,0.069,1.382,Index Scan using idx_applications_job_applied on applications
+R09,READ,0.432,0.060,0.060,1.176,Index Only Scan using idx_applications_member_recent on applications | Index Scan using jobs_pkey on jobs | Index Scan using companies_pkey on companies
+R10,READ,0.194,0.047,0.035,0.501,Index Only Scan using idx_invitations_recipient_status on invitations | Index Scan using members_pkey on members
+R11,READ,0.420,0.403,0.250,0.608,Index Only Scan using idx_profile_views_viewed_time on profile_views
+R12,READ,6.944,6.214,4.775,9.842,Seq Scan on companies | Index Only Scan using idx_positions_company_current on positions
+R13,READ,352.624,350.264,346.206,361.403,Seq Scan on profile_views | Seq Scan on members
+R14,READ,102.080,101.813,100.876,103.551,Seq Scan on jobs | Index Only Scan using idx_applications_hired_updated on applications | Seq Scan on companies
+R15,READ,66.015,63.685,63.611,70.750,Seq Scan on jobs | Index Only Scan using job_skills_pkey on job_skills | Seq Scan on skills
+R16,READ,12.809,12.695,12.354,13.379,Seq Scan on jobs | Seq Scan on cities
+R17,READ,151.605,47.400,46.129,361.286,Seq Scan on positions | Seq Scan on companies | Index Only Scan using idx_positions_member_start on positions | Index Scan using companies_pkey on companies
+R18,READ,41.305,26.245,25.300,72.371,Seq Scan on members | Seq Scan on skills | Index Only Scan using idx_member_skills_skill_endorsements on member_skills
+R19,READ,49.538,48.312,46.459,53.844,Bitmap Heap Scan on companies | Bitmap Index Scan on idx_companies_industry | Index Only Scan using idx_applications_recent on applications | Seq Scan on jobs | Index Scan using idx_jobs_open_closes on jobs
+R20,READ,23.695,23.188,23.111,24.785,Index Only Scan using idx_applications_recent on applications
+R21,READ,6.082,0.407,0.363,17.476,Seq Scan on skills | Index Only Scan using idx_member_skills_skill_endorsements on member_skills
+R22,READ,8.968,8.891,8.684,9.328,Index Only Scan using idx_applications_recent on applications
+R23,READ,0.176,0.033,0.032,0.462,Index Scan using idx_members_lower_email on members
+R24,READ,94.472,88.754,86.832,107.830,Seq Scan on members | Seq Scan on invitations
+R25,READ,507.957,513.605,484.022,526.244,Index Only Scan using idx_positions_member_start on positions
+W01,WRITE,1.868,0.767,0.668,4.170,(no scan)
+W02,WRITE,0.658,0.250,0.238,1.487,Index Only Scan using idx_invitations_recipient_status on invitations | Index Scan using invitations_pkey on invitations
+W03,WRITE,1.694,1.247,0.959,2.875,Index Only Scan using idx_invitations_recipient_status on invitations | Index Scan using invitations_pkey on invitations
+W04,WRITE,405.460,128.184,105.931,982.265,Index Scan using idx_jobs_open_closes on jobs
+W05,WRITE,312.144,11.498,11.215,913.718,Seq Scan on companies | Bitmap Heap Scan on jobs | Bitmap Index Scan on idx_jobs_company_status | Index Scan using idx_applications_job_applied on applications

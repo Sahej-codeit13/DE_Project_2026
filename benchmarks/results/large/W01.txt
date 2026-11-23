@@ -1,9 +1,42 @@
-=== W01 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: WRITE
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== W01 run 1 ===
+Insert on applications  (cost=0.00..0.01 rows=0 width=0) (actual time=1.630..1.631 rows=0 loops=1)
+  Conflict Resolution: NOTHING
+  Conflict Arbiter Indexes: applications_job_member_unique
+  Tuples Inserted: 1
+  Conflicting Tuples: 0
+  Buffers: shared hit=18 read=28 dirtied=7
+  ->  Result  (cost=0.00..0.01 rows=1 width=107) (actual time=0.001..0.001 rows=1 loops=1)
+Planning:
+  Buffers: shared hit=132 read=1
+Planning Time: 0.118 ms
+Trigger for constraint applications_job_id_fkey: time=0.985 calls=1
+Trigger for constraint applications_member_id_fkey: time=1.543 calls=1
+Execution Time: 4.170 ms
+=== W01 run 2 ===
+Insert on applications  (cost=0.00..0.01 rows=0 width=0) (actual time=0.173..0.173 rows=0 loops=1)
+  Conflict Resolution: NOTHING
+  Conflict Arbiter Indexes: applications_job_member_unique
+  Tuples Inserted: 1
+  Conflicting Tuples: 0
+  Buffers: shared hit=46 read=1 dirtied=1
+  ->  Result  (cost=0.00..0.01 rows=1 width=107) (actual time=0.001..0.001 rows=1 loops=1)
+Planning:
+  Buffers: shared hit=133
+Planning Time: 0.113 ms
+Trigger for constraint applications_job_id_fkey: time=0.292 calls=1
+Trigger for constraint applications_member_id_fkey: time=0.192 calls=1
+Execution Time: 0.668 ms
+=== W01 run 3 ===
+Insert on applications  (cost=0.00..0.01 rows=0 width=0) (actual time=0.336..0.336 rows=0 loops=1)
+  Conflict Resolution: NOTHING
+  Conflict Arbiter Indexes: applications_job_member_unique
+  Tuples Inserted: 1
+  Conflicting Tuples: 0
+  Buffers: shared hit=46 read=1 dirtied=1
+  ->  Result  (cost=0.00..0.01 rows=1 width=107) (actual time=0.001..0.001 rows=1 loops=1)
+Planning:
+  Buffers: shared hit=133
+Planning Time: 0.099 ms
+Trigger for constraint applications_job_id_fkey: time=0.253 calls=1
+Trigger for constraint applications_member_id_fkey: time=0.168 calls=1
+Execution Time: 0.767 ms

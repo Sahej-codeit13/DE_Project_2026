@@ -1,9 +1,51 @@
-=== R12 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R12 run 1 ===
+GroupAggregate  (cost=0.42..1062.66 rows=1 width=61) (actual time=9.789..9.790 rows=1 loops=1)
+  Buffers: shared hit=396 read=162
+  ->  Nested Loop  (cost=0.42..1062.43 rows=17 width=25) (actual time=0.638..9.439 rows=683 loops=1)
+        Buffers: shared hit=396 read=162
+        ->  Seq Scan on companies c  (cost=0.00..1052.00 rows=1 width=25) (actual time=0.013..8.239 rows=1 loops=1)
+              Filter: ((company_name)::text = 'Flipkart'::text)
+              Rows Removed by Filter: 39999
+              Buffers: shared hit=395 read=157
+        ->  Index Only Scan using idx_positions_company_current on positions p  (cost=0.42..9.70 rows=73 width=8) (actual time=0.622..1.078 rows=683 loops=1)
+              Index Cond: (company_id = c.company_id)
+              Heap Fetches: 0
+              Buffers: shared hit=1 read=5
+Planning:
+  Buffers: shared hit=306 read=2
+Planning Time: 1.861 ms
+Execution Time: 9.842 ms
+=== R12 run 2 ===
+GroupAggregate  (cost=0.42..1062.66 rows=1 width=61) (actual time=6.136..6.137 rows=1 loops=1)
+  Buffers: shared hit=558
+  ->  Nested Loop  (cost=0.42..1062.43 rows=17 width=25) (actual time=0.099..5.898 rows=683 loops=1)
+        Buffers: shared hit=558
+        ->  Seq Scan on companies c  (cost=0.00..1052.00 rows=1 width=25) (actual time=0.021..5.659 rows=1 loops=1)
+              Filter: ((company_name)::text = 'Flipkart'::text)
+              Rows Removed by Filter: 39999
+              Buffers: shared hit=552
+        ->  Index Only Scan using idx_positions_company_current on positions p  (cost=0.42..9.70 rows=73 width=8) (actual time=0.076..0.164 rows=683 loops=1)
+              Index Cond: (company_id = c.company_id)
+              Heap Fetches: 0
+              Buffers: shared hit=6
+Planning:
+  Buffers: shared hit=308
+Planning Time: 1.543 ms
+Execution Time: 6.214 ms
+=== R12 run 3 ===
+GroupAggregate  (cost=0.42..1062.66 rows=1 width=61) (actual time=4.723..4.724 rows=1 loops=1)
+  Buffers: shared hit=558
+  ->  Nested Loop  (cost=0.42..1062.43 rows=17 width=25) (actual time=0.075..4.519 rows=683 loops=1)
+        Buffers: shared hit=558
+        ->  Seq Scan on companies c  (cost=0.00..1052.00 rows=1 width=25) (actual time=0.015..4.301 rows=1 loops=1)
+              Filter: ((company_name)::text = 'Flipkart'::text)
+              Rows Removed by Filter: 39999
+              Buffers: shared hit=552
+        ->  Index Only Scan using idx_positions_company_current on positions p  (cost=0.42..9.70 rows=73 width=8) (actual time=0.059..0.146 rows=683 loops=1)
+              Index Cond: (company_id = c.company_id)
+              Heap Fetches: 0
+              Buffers: shared hit=6
+Planning:
+  Buffers: shared hit=308
+Planning Time: 1.135 ms
+Execution Time: 4.775 ms

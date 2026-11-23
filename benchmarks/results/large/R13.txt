@@ -1,9 +1,57 @@
-=== R13 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R13 run 1 ===
+Gather  (cost=22752.00..122397.94 rows=271438 width=16) (actual time=285.836..346.539 rows=130313 loops=1)
+  Workers Planned: 2
+  Workers Launched: 2
+  Buffers: shared hit=9021 read=28317, temp read=11911 written=11976
+  ->  Parallel Hash Right Anti Join  (cost=21752.00..94254.14 rows=113099 width=16) (actual time=282.659..330.356 rows=43438 loops=3)
+        Hash Cond: (v.viewer_id = m.member_id)
+        Buffers: shared hit=9021 read=28317, temp read=11911 written=11976
+        ->  Parallel Seq Scan on profile_views v  (cost=0.00..41226.64 rows=1666664 width=4) (actual time=0.038..48.152 rows=1333331 loops=3)
+              Buffers: shared hit=437 read=24123
+        ->  Parallel Hash  (cost=15957.33..15957.33 rows=333333 width=16) (actual time=63.858..63.858 rows=266667 loops=3)
+              Buckets: 262144  Batches: 8  Memory Usage: 7072kB
+              Buffers: shared hit=8430 read=4194, temp written=3128
+              ->  Parallel Seq Scan on members m  (cost=0.00..15957.33 rows=333333 width=16) (actual time=0.157..26.068 rows=266667 loops=3)
+                    Buffers: shared hit=8430 read=4194
+Planning:
+  Buffers: shared hit=291 read=5
+Planning Time: 2.413 ms
+Execution Time: 350.264 ms
+=== R13 run 2 ===
+Gather  (cost=22752.00..122397.94 rows=271438 width=16) (actual time=298.441..358.952 rows=130313 loops=1)
+  Workers Planned: 2
+  Workers Launched: 2
+  Buffers: shared hit=9205 read=28133, temp read=11907 written=11968
+  ->  Parallel Hash Right Anti Join  (cost=21752.00..94254.14 rows=113099 width=16) (actual time=296.301..350.381 rows=43438 loops=3)
+        Hash Cond: (v.viewer_id = m.member_id)
+        Buffers: shared hit=9205 read=28133, temp read=11907 written=11968
+        ->  Parallel Seq Scan on profile_views v  (cost=0.00..41226.64 rows=1666664 width=4) (actual time=0.034..47.098 rows=1333331 loops=3)
+              Buffers: shared hit=524 read=24036
+        ->  Parallel Hash  (cost=15957.33..15957.33 rows=333333 width=16) (actual time=60.886..60.886 rows=266667 loops=3)
+              Buckets: 262144  Batches: 8  Memory Usage: 7072kB
+              Buffers: shared hit=8527 read=4097, temp written=3132
+              ->  Parallel Seq Scan on members m  (cost=0.00..15957.33 rows=333333 width=16) (actual time=0.011..15.394 rows=266667 loops=3)
+                    Buffers: shared hit=8527 read=4097
+Planning:
+  Buffers: shared hit=296
+Planning Time: 0.471 ms
+Execution Time: 361.403 ms
+=== R13 run 3 ===
+Gather  (cost=22752.00..122397.94 rows=271438 width=16) (actual time=270.614..343.819 rows=130313 loops=1)
+  Workers Planned: 2
+  Workers Launched: 2
+  Buffers: shared hit=9399 read=27939, temp read=11913 written=11988
+  ->  Parallel Hash Right Anti Join  (cost=21752.00..94254.14 rows=113099 width=16) (actual time=269.569..318.059 rows=43438 loops=3)
+        Hash Cond: (v.viewer_id = m.member_id)
+        Buffers: shared hit=9399 read=27939, temp read=11913 written=11988
+        ->  Parallel Seq Scan on profile_views v  (cost=0.00..41226.64 rows=1666664 width=4) (actual time=0.050..47.260 rows=1333331 loops=3)
+              Buffers: shared hit=622 read=23938
+        ->  Parallel Hash  (cost=15957.33..15957.33 rows=333333 width=16) (actual time=46.394..46.394 rows=266667 loops=3)
+              Buckets: 262144  Batches: 8  Memory Usage: 7104kB
+              Buffers: shared hit=8623 read=4001, temp written=3140
+              ->  Parallel Seq Scan on members m  (cost=0.00..15957.33 rows=333333 width=16) (actual time=0.007..15.879 rows=266667 loops=3)
+                    Buffers: shared hit=8623 read=4001
+Planning:
+  Buffers: shared hit=296
+Planning Time: 0.527 ms
+Execution Time: 346.206 ms

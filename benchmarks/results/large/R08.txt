@@ -1,9 +1,57 @@
-=== R08 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R08 run 1 ===
+Sort  (cost=28.58..28.60 rows=6 width=16) (actual time=1.358..1.358 rows=5 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=6 read=13
+  ->  GroupAggregate  (cost=28.36..28.51 rows=6 width=16) (actual time=1.351..1.353 rows=5 loops=1)
+        Group Key: status
+        Buffers: shared hit=3 read=13
+        ->  Sort  (cost=28.36..28.39 rows=12 width=8) (actual time=1.347..1.347 rows=10 loops=1)
+              Sort Key: status
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=3 read=13
+              ->  Index Scan using idx_applications_job_applied on applications a  (cost=0.43..28.14 rows=12 width=8) (actual time=0.222..1.331 rows=10 loops=1)
+                    Index Cond: (job_id = 14075)
+                    Buffers: shared read=13
+Planning:
+  Buffers: shared hit=218
+Planning Time: 0.342 ms
+Execution Time: 1.382 ms
+=== R08 run 2 ===
+Sort  (cost=28.58..28.60 rows=6 width=16) (actual time=0.045..0.045 rows=5 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=19
+  ->  GroupAggregate  (cost=28.36..28.51 rows=6 width=16) (actual time=0.037..0.039 rows=5 loops=1)
+        Group Key: status
+        Buffers: shared hit=16
+        ->  Sort  (cost=28.36..28.39 rows=12 width=8) (actual time=0.033..0.033 rows=10 loops=1)
+              Sort Key: status
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=16
+              ->  Index Scan using idx_applications_job_applied on applications a  (cost=0.43..28.14 rows=12 width=8) (actual time=0.008..0.017 rows=10 loops=1)
+                    Index Cond: (job_id = 14075)
+                    Buffers: shared hit=13
+Planning:
+  Buffers: shared hit=218
+Planning Time: 0.322 ms
+Execution Time: 0.069 ms
+=== R08 run 3 ===
+Sort  (cost=28.58..28.60 rows=6 width=16) (actual time=0.045..0.045 rows=5 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=19
+  ->  GroupAggregate  (cost=28.36..28.51 rows=6 width=16) (actual time=0.037..0.039 rows=5 loops=1)
+        Group Key: status
+        Buffers: shared hit=16
+        ->  Sort  (cost=28.36..28.39 rows=12 width=8) (actual time=0.033..0.034 rows=10 loops=1)
+              Sort Key: status
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=16
+              ->  Index Scan using idx_applications_job_applied on applications a  (cost=0.43..28.14 rows=12 width=8) (actual time=0.008..0.017 rows=10 loops=1)
+                    Index Cond: (job_id = 14075)
+                    Buffers: shared hit=13
+Planning:
+  Buffers: shared hit=218
+Planning Time: 0.302 ms
+Execution Time: 0.070 ms

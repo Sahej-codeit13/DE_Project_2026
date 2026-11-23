@@ -1,9 +1,123 @@
-=== R16 Benchmark Plan (Phase 5 / Large Dataset) ===
-Status: BLOCKED
-Reason: large_data.zip is unavailable in the environment.
-Expected Query Type: READ
-
-Benchmark execution command once large_data is unzipped and loaded:
-  ./benchmarks/run_benchmark.sh <database> large 3 sql/06_optimized_queries.sql
-
-Per faculty requirements and anti-fabrication guidelines, no synthetic timings or simulated EXPLAIN plans have been substituted. See docs/05_scalability_report.md for full details.
+=== R16 run 1 ===
+Incremental Sort  (cost=7450.27..7498.33 rows=160 width=121) (actual time=12.585..13.331 rows=176 loops=1)
+  Sort Key: j.title, (round(avg(j.max_salary_lpa), 1)) DESC NULLS LAST
+  Presorted Key: j.title
+  Full-sort Groups: 6  Sort Method: quicksort  Average Memory: 27kB  Peak Memory: 27kB
+  Buffers: shared hit=4538
+  ->  Finalize GroupAggregate  (cost=7447.22..7493.35 rows=160 width=121) (actual time=12.496..13.254 rows=176 loops=1)
+        Group Key: j.title, (COALESCE(ct.city_name, 'Remote'::character varying))
+        Buffers: shared hit=4535
+        ->  Gather Merge  (cost=7447.22..7484.55 rows=320 width=121) (actual time=12.478..12.991 rows=528 loops=1)
+              Workers Planned: 2
+              Workers Launched: 2
+              Buffers: shared hit=4535
+              ->  Sort  (cost=6447.20..6447.60 rows=160 width=121) (actual time=11.136..11.140 rows=176 loops=3)
+                    Sort Key: j.title, (COALESCE(ct.city_name, 'Remote'::character varying))
+                    Sort Method: quicksort  Memory: 57kB
+                    Buffers: shared hit=4535
+                    Worker 0:  Sort Method: quicksort  Memory: 57kB
+                    Worker 1:  Sort Method: quicksort  Memory: 57kB
+                    ->  Partial HashAggregate  (cost=6438.94..6441.34 rows=160 width=121) (actual time=10.895..10.923 rows=176 loops=3)
+                          Group Key: j.title, COALESCE(ct.city_name, 'Remote'::character varying)
+                          Batches: 1  Memory Usage: 288kB
+                          Buffers: shared hit=4519
+                          Worker 0:  Batches: 1  Memory Usage: 288kB
+                          Worker 1:  Batches: 1  Memory Usage: 288kB
+                          ->  Hash Left Join  (cost=1.23..6131.18 rows=24621 width=61) (actual time=4.221..7.871 rows=19895 loops=3)
+                                Hash Cond: (j.city_id = ct.city_id)
+                                Buffers: shared hit=4519
+                                ->  Parallel Seq Scan on jobs j  (cost=0.00..6042.14 rows=24621 width=33) (actual time=4.187..6.494 rows=19895 loops=3)
+                                      Filter: ((min_salary_lpa IS NOT NULL) AND (posted_at >= '2026-01-01 00:00:00+05:30'::timestamp with time zone))
+                                      Rows Removed by Filter: 80105
+                                      Buffers: shared hit=4488
+                                ->  Hash  (cost=1.10..1.10 rows=10 width=11) (actual time=0.019..0.019 rows=10 loops=3)
+                                      Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                      Buffers: shared hit=3
+                                      ->  Seq Scan on cities ct  (cost=0.00..1.10 rows=10 width=11) (actual time=0.016..0.016 rows=10 loops=3)
+                                            Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=290 read=3
+Planning Time: 0.723 ms
+Execution Time: 13.379 ms
+=== R16 run 2 ===
+Incremental Sort  (cost=7450.27..7498.33 rows=160 width=121) (actual time=12.006..12.645 rows=176 loops=1)
+  Sort Key: j.title, (round(avg(j.max_salary_lpa), 1)) DESC NULLS LAST
+  Presorted Key: j.title
+  Full-sort Groups: 6  Sort Method: quicksort  Average Memory: 27kB  Peak Memory: 27kB
+  Buffers: shared hit=4538
+  ->  Finalize GroupAggregate  (cost=7447.22..7493.35 rows=160 width=121) (actual time=11.919..12.568 rows=176 loops=1)
+        Group Key: j.title, (COALESCE(ct.city_name, 'Remote'::character varying))
+        Buffers: shared hit=4535
+        ->  Gather Merge  (cost=7447.22..7484.55 rows=320 width=121) (actual time=11.911..12.361 rows=528 loops=1)
+              Workers Planned: 2
+              Workers Launched: 2
+              Buffers: shared hit=4535
+              ->  Sort  (cost=6447.20..6447.60 rows=160 width=121) (actual time=10.575..10.579 rows=176 loops=3)
+                    Sort Key: j.title, (COALESCE(ct.city_name, 'Remote'::character varying))
+                    Sort Method: quicksort  Memory: 57kB
+                    Buffers: shared hit=4535
+                    Worker 0:  Sort Method: quicksort  Memory: 57kB
+                    Worker 1:  Sort Method: quicksort  Memory: 57kB
+                    ->  Partial HashAggregate  (cost=6438.94..6441.34 rows=160 width=121) (actual time=10.346..10.374 rows=176 loops=3)
+                          Group Key: j.title, COALESCE(ct.city_name, 'Remote'::character varying)
+                          Batches: 1  Memory Usage: 288kB
+                          Buffers: shared hit=4519
+                          Worker 0:  Batches: 1  Memory Usage: 288kB
+                          Worker 1:  Batches: 1  Memory Usage: 288kB
+                          ->  Hash Left Join  (cost=1.23..6131.18 rows=24621 width=61) (actual time=4.263..7.716 rows=19895 loops=3)
+                                Hash Cond: (j.city_id = ct.city_id)
+                                Buffers: shared hit=4519
+                                ->  Parallel Seq Scan on jobs j  (cost=0.00..6042.14 rows=24621 width=33) (actual time=4.229..6.409 rows=19895 loops=3)
+                                      Filter: ((min_salary_lpa IS NOT NULL) AND (posted_at >= '2026-01-01 00:00:00+05:30'::timestamp with time zone))
+                                      Rows Removed by Filter: 80105
+                                      Buffers: shared hit=4488
+                                ->  Hash  (cost=1.10..1.10 rows=10 width=11) (actual time=0.021..0.021 rows=10 loops=3)
+                                      Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                      Buffers: shared hit=3
+                                      ->  Seq Scan on cities ct  (cost=0.00..1.10 rows=10 width=11) (actual time=0.018..0.018 rows=10 loops=3)
+                                            Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=293
+Planning Time: 0.375 ms
+Execution Time: 12.695 ms
+=== R16 run 3 ===
+Incremental Sort  (cost=7450.27..7498.33 rows=160 width=121) (actual time=11.657..12.306 rows=176 loops=1)
+  Sort Key: j.title, (round(avg(j.max_salary_lpa), 1)) DESC NULLS LAST
+  Presorted Key: j.title
+  Full-sort Groups: 6  Sort Method: quicksort  Average Memory: 27kB  Peak Memory: 27kB
+  Buffers: shared hit=4538
+  ->  Finalize GroupAggregate  (cost=7447.22..7493.35 rows=160 width=121) (actual time=11.570..12.238 rows=176 loops=1)
+        Group Key: j.title, (COALESCE(ct.city_name, 'Remote'::character varying))
+        Buffers: shared hit=4535
+        ->  Gather Merge  (cost=7447.22..7484.55 rows=320 width=121) (actual time=11.564..12.023 rows=528 loops=1)
+              Workers Planned: 2
+              Workers Launched: 2
+              Buffers: shared hit=4535
+              ->  Sort  (cost=6447.20..6447.60 rows=160 width=121) (actual time=10.317..10.321 rows=176 loops=3)
+                    Sort Key: j.title, (COALESCE(ct.city_name, 'Remote'::character varying))
+                    Sort Method: quicksort  Memory: 57kB
+                    Buffers: shared hit=4535
+                    Worker 0:  Sort Method: quicksort  Memory: 57kB
+                    Worker 1:  Sort Method: quicksort  Memory: 57kB
+                    ->  Partial HashAggregate  (cost=6438.94..6441.34 rows=160 width=121) (actual time=10.083..10.112 rows=176 loops=3)
+                          Group Key: j.title, COALESCE(ct.city_name, 'Remote'::character varying)
+                          Batches: 1  Memory Usage: 288kB
+                          Buffers: shared hit=4519
+                          Worker 0:  Batches: 1  Memory Usage: 288kB
+                          Worker 1:  Batches: 1  Memory Usage: 288kB
+                          ->  Hash Left Join  (cost=1.23..6131.18 rows=24621 width=61) (actual time=4.070..7.492 rows=19895 loops=3)
+                                Hash Cond: (j.city_id = ct.city_id)
+                                Buffers: shared hit=4519
+                                ->  Parallel Seq Scan on jobs j  (cost=0.00..6042.14 rows=24621 width=33) (actual time=4.038..6.191 rows=19895 loops=3)
+                                      Filter: ((min_salary_lpa IS NOT NULL) AND (posted_at >= '2026-01-01 00:00:00+05:30'::timestamp with time zone))
+                                      Rows Removed by Filter: 80105
+                                      Buffers: shared hit=4488
+                                ->  Hash  (cost=1.10..1.10 rows=10 width=11) (actual time=0.020..0.020 rows=10 loops=3)
+                                      Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                      Buffers: shared hit=3
+                                      ->  Seq Scan on cities ct  (cost=0.00..1.10 rows=10 width=11) (actual time=0.016..0.016 rows=10 loops=3)
+                                            Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=293
+Planning Time: 0.349 ms
+Execution Time: 12.354 ms
